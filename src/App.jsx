@@ -5,44 +5,61 @@ import Chat from "./components/Chat";
 import ChatInput from "./components/Chat/ChatInput";
 import Header from "./components/Header/Header";
 import Sidebar from "components/Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getChats } from "./hooks/chatsHooks";
-import { checkUser } from "./hooks/firebaseHooks";
 import { Route, Routes } from "react-router-dom";
 import NoChat from "./components/Chat/NoChat";
+import { checkUser } from "./store/userThunk";
+import ContextMenu from "./components/Sidebar/ContextMenu";
+import { setContextMenu } from "./store/systemSlice";
 
 function App() {
-  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  const { contextMenu } = useSelector((state) => state.system);
   useEffect(() => {
-    checkUser(dispatch);
+    dispatch(checkUser());
   }, []);
-  useEffect(() => {
-    const unsub = getChats(dispatch, user);
-    return unsub;
-  }, [user]);
+
   return (
     <>
-      <Container maxWidth="lg">
+      <Container
+        onContextMenu={(e) => {
+          e.preventDefault();
+        }}
+        onClick={(e) => {
+          contextMenu.active &&
+            dispatch(setContextMenu({ active: false, position: null }));
+        }}
+        maxWidth="lg"
+      >
         <Header />
-        <Grid container sx={{ height: "calc(100vh - 64px)" }}>
-          <Grid item xs={3}>
-            <Sidebar />
-          </Grid>
-          <Grid item sx={{ maxHeight: "100%" }} xs={9}>
-            <Box sx={{ height: "88%", overflowY: "auto" }}>
-              <Routes>
-                <Route element={<NoChat />} index />
-                <Route element={<Chat />} path={"chat/:id"} />
-                {/* <Chat chatID={"VRWarWbJmqSzU51wF0Xc"} /> */}
-              </Routes>
+        <Grid
+          container
+          sx={{
+            height: "calc(100vh - 64px)",
+          }}
+        >
+          <Grid sx={{ position: "relative" }} item xs={3}>
+            <Box
+              sx={{
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              <Sidebar />
             </Box>
+          </Grid>
+          <Grid item sx={{ position: "relative", maxHeight: "100%" }} xs={9}>
+            <Routes>
+              <Route element={<NoChat />} index />
+              <Route element={<Chat />} path={"chat/:id"} />
+            </Routes>
           </Grid>
         </Grid>
       </Container>
+      {contextMenu.active && <ContextMenu />}
     </>
   );
 }

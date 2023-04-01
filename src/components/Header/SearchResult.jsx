@@ -9,8 +9,8 @@ import Typography from "@mui/material/Typography";
 import SearchItem from "./SearchItem";
 import { Box } from "@mui/system";
 
-export default function SearchResult({ status, active, result }) {
-  return status === "loading" ? (
+export default function SearchResult({ status, active, result, searchText }) {
+  return status === "loading" && active ? (
     <Box
       sx={{
         position: "absolute",
@@ -26,7 +26,12 @@ export default function SearchResult({ status, active, result }) {
   ) : (
     <List
       sx={{
-        display: active && result.length ? "block" : "none",
+        display:
+          (active && result.length) ||
+          status == "loading" ||
+          (active && searchText)
+            ? "block"
+            : "none",
         position: "absolute",
         right: 0,
         marginTop: 0.5,
@@ -35,9 +40,13 @@ export default function SearchResult({ status, active, result }) {
         bgcolor: "background.paper",
       }}
     >
-      {result.map((res) => {
-        return <SearchItem key={res.id} res={res} />;
-      })}
+      {result.length ? (
+        result.map((res) => {
+          return <SearchItem key={res.id} res={res} />;
+        })
+      ) : (
+        <Typography sx={{ color: "red" }}>"РЕЗУЛЬТАТОВ НЕТ"</Typography>
+      )}
     </List>
   );
 }

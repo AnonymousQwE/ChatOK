@@ -2,13 +2,11 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Avatar, Button } from "@mui/material";
 import { db } from "../../firebase-setting";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createNewDialog,
-  logoutUser,
-  signInGoogle,
-} from "../../hooks/firebaseHooks";
+import { createNewDialog } from "../../hooks/firebaseHooks";
 import { collectionGroup, getDocs, query, where } from "firebase/firestore";
 import Search from "./Search";
+import { logoutUser, signInGoogle } from "../../store/userThunk";
+import UserProfile from "./UserProfile";
 
 function Header() {
   const dispatch = useDispatch();
@@ -53,15 +51,8 @@ function Header() {
             Поиск
           </Button>
         )}
-        <Avatar
-          alt={user?.displayName}
-          onClick={async () => {
-            if (!user) {
-              dispatch(signInGoogle());
-            } else dispatch(logoutUser());
-          }}
-          src={user?.photoURL}
-        />
+
+        <UserProfile />
       </Toolbar>
     </AppBar>
   );

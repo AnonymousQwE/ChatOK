@@ -1,15 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createNewDialog,
-  logoutUser,
-  signInGoogle,
 } from "../hooks/firebaseHooks";
-// import {
-//   getUserData,
-//   loginUser,
-//   logoutUser,
-//   registerUser,
-// } from "../hooks/firebaseHooks";
+import { checkUser, logoutUser, signInGoogle } from "./userThunk";
 
 const userSlice = createSlice({
   name: "user",
@@ -49,6 +42,21 @@ const userSlice = createSlice({
       state.notify.push({ type: "error", content: action.payload });
       state.status = "rejected";
     });
+    builder.addCase(checkUser.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(checkUser.fulfilled, (state, action) => {
+      state.user = action.payload;
+      state.notify.push({
+        type: "success",
+        content: "Вы успешно авторизовались! Добро пожаловать!",
+      });
+      state.status = "loaded";
+    });
+    builder.addCase(checkUser.rejected, (state, action) => {
+      state.notify.push({ type: "error", content: action.payload });
+      state.status = "rejected";
+    });
     builder.addCase(createNewDialog.pending, (state) => {
       state.status = "loading";
     });
@@ -64,32 +72,6 @@ const userSlice = createSlice({
       state.notify.push({ type: "error", content: action.payload });
       state.status = "rejected";
     });
-    //   builder.addCase(getUserData.pending, (state) => {
-    //     state.status = "loading";
-    //   });
-    //   builder.addCase(getUserData.fulfilled, (state, action) => {
-    //     state.user += action.payload;
-    //     state.status = "loaded";
-    //   });
-    //   builder.addCase(getUserData.rejected, (state, action) => {
-    //     state.status = "rejected";
-    //     state.notify.push({ type: "error", content: action.payload });
-    //   });
-    //   builder.addCase(registerUser.pending, (state, action) => {
-    //     state.status = "loading";
-    //   });
-    //   builder.addCase(registerUser.fulfilled, (state, action) => {
-    //     state.user = action.payload;
-    //     state.notify.push({
-    //       type: "success",
-    //       content: "Вы успешно зарегистрировались!",
-    //     });
-    //     state.status = "loaded";
-    //   });
-    //   builder.addCase(registerUser.rejected, (state, action) => {
-    //     state.notify.push({ type: "error", content: action.payload });
-    //     state.status = "rejected";
-    //   });
     builder.addCase(logoutUser.pending, (state) => {
       state.status = "loading";
     });

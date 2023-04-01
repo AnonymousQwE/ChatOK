@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Divider,
   ListItem,
   ListItemAvatar,
   Typography,
@@ -9,30 +8,92 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
+import { formatTimestamp } from "../../utils/time";
 
 export default function ChatMessage({ messRef, message }) {
   const theme = useTheme();
   const { user } = useSelector((state) => state.user);
 
-  let owner;
-  const setMessStyle = (senderID) => {
-    if (senderID === user?.id) {
-      owner = true;
-    } else owner = false;
+  const owner =
+    message.owner === user?.id
+      ? true
+      : message.owner === "system"
+      ? "system"
+      : false;
+  const setMessStyle = () => {
+    const system = {
+      position: "relative",
+      backgroundColor: theme.palette.success.light,
+      color: theme.palette.primary.contrastText,
+      borderRadius: "10px",
+      padding: theme.spacing(1.5),
+    };
     const sentMessage = {
+      position: "relative",
+      maxWidth: "100%",
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.primary.contrastText,
-      borderRadius: "20px",
-      padding: theme.spacing(1, 2),
+      overflowWrap: "break-word",
+      borderRadius: "10px",
+      padding: theme.spacing(1),
+      "&::before": {
+        content: `""`,
+        position: "absolute",
+        zIndex: -2,
+        bottom: 0,
+        right: -10,
+        background: theme.palette.primary.main,
+        width: "20px",
+        height: "10px",
+      },
+      "&::after": {
+        content: `""`,
+        position: "absolute",
+        zIndex: -1,
+        bottom: -1,
+        right: -17,
+        background: theme.palette.background.paper,
+        width: "17px",
+        height: "17px",
+        borderRadius: "10px",
+      },
     };
     const receivedMessage = {
+      position: "relative",
+      display: "inline-block",
+      maxWidth: "100%",
       backgroundColor: theme.palette.background.default,
       color: theme.palette.text.primary,
-      borderRadius: "20px",
-      padding: theme.spacing(1, 2),
+      overflowWrap: "break-word",
+      borderRadius: "10px",
+      background: "rgba(185, 185, 185)",
+      padding: theme.spacing(1),
+      "&::before": {
+        content: `""`,
+        position: "absolute",
+        zIndex: -2,
+        bottom: 0,
+        left: -10,
+        background: "rgba(185, 185, 185)",
+        width: "20px",
+        height: "10px",
+      },
+      "&::after": {
+        content: `""`,
+        position: "absolute",
+        zIndex: -1,
+        bottom: -1,
+        left: -17,
+        background: theme.palette.background.paper,
+        width: "17px",
+        height: "17px",
+        borderRadius: "10px",
+      },
     };
-    if (senderID === user?.id) {
-      return sentMessage;
+    if (owner) {
+      if (owner === "system") {
+        return system;
+      } else return sentMessage;
     } else {
       return receivedMessage;
     }
@@ -43,49 +104,65 @@ export default function ChatMessage({ messRef, message }) {
         ref={messRef}
         sx={{
           display: "flex",
-          alignItems: "center",
-          flexDirection: "row-reverse",
-          marginBottom: theme.spacing(1),
+          alignItems: "flex-end",
+          justifyContent: owner === "system" && "center",
+          flexDirection: owner ? "row-reverse" : "row",
         }}
       >
-        <ListItemAvatar>
+        <ListItemAvatar
+          sx={{
+            display: "flex",
+            display: owner === "system" && "none",
+          }}
+        >
           <Avatar
-            alt={message.owner.displayName}
-            src={message.owner.photoURL}
+            sx={{ margin: "0 auto" }}
+            alt={message.owner?.displayName}
+            src={message.owner?.photoURL}
           />
         </ListItemAvatar>
         <Box
           sx={{
-            paddingRight: 1,
             maxWidth: "80%",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-end",
+            alignItems:
+              owner === "system" ? "center" : owner ? "flex-end" : "flex-start",
           }}
         >
           <Box
             sx={{
               display: "flex",
-              flexDirection: owner ? "row-reverse" : "row",
+              flexDirection: "column",
               justifyContent: "center",
-              textAlign: "center",
-              alignItems: "center",
+              textAlign: owner ? "end" : "start",
+              alignItems: owner ? "flex-end" : "flex-start",
             }}
             variant="caption"
           >
             <Typography
               sx={{
-                fontSize: 13,
+                display: owner === "system" && "none",
+                fontSize: 12,
               }}
             >
-              {message.owner.displayName}
+              {message.owner.substring(0, 10)}
             </Typography>
-            <Typography sx={{ fontSize: 10 }}>·</Typography>
-            <Typography sx={{ fontSize: 10 }}>{message.createDate}</Typography>
+            <Typography sx={{ fontSize: 10 }}>
+              {formatTimestamp(message.createDate)}
+            </Typography>
           </Box>
-          <Typography variant="body2" sx={setMessStyle(message.owner)}>
-            {message.text}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: owner ? "flex-end" : "flex-start",
+              width: "100%",
+            }}
+          >
+            <Typography variant="body2" sx={setMessStyle()}>
+              {message.text}
+            </Typography>
+          </Box>
         </Box>
       </ListItem>
       {message.file && (
@@ -101,7 +178,7 @@ export default function ChatMessage({ messRef, message }) {
           </Box>
         </ListItem>
       )}
-      <Divider />
+      {/* <Divider /> */}
     </>
   );
 }

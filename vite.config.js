@@ -9,6 +9,7 @@ export default defineConfig({
       src: "/src",
       components: "/src/components",
       store: "/src/store",
+      utils: "/src/utils",
     },
   },
 });

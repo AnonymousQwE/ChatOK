@@ -12,6 +12,7 @@ import React from "react";
 
 export default function SearchItem({ res }) {
   const theme = useTheme();
+  console.log(res.id);
   return (
     <Box
       sx={{

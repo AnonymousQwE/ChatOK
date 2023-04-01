@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { useParams } from "react-router-dom";
-import { addMessage, setMessages } from "../../store/messagesSlice";
 import ChatInput from "./ChatInput";
 
 function Chat() {
@@ -15,35 +14,39 @@ function Chat() {
   const messRef = useRef(null);
   const { id } = useParams();
 
-  const { messages } = useSelector((state) => state.messages);
+  const { chats } = useSelector((state) => state.chats);
+  const currentChat = chats.filter((chat) => {
+    return chat.id === id ? true : false;
+  });
   useEffect(() => {
-    messRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [id]);
-
-  useEffect(() => {
-    const unsub = onSnapshot(
-      collection(db, "chats", id, "messages"),
-      (query) => {
-        const messages = [];
-        query.forEach((doc) => {
-          messages.push({ id: doc.id, ...doc.data() });
-          // console.log({ id: doc.id, ...doc.data() });
-        });
-        dispatch(setMessages(messages));
-      }
-    );
-    return unsub;
-  }, [id]);
+    messRef.current?.scrollIntoView({
+      block: "end",
+      inline: "nearest",
+      behavior: "smooth",
+    });
+  }, [currentChat[0]?.messages]);
 
   return (
-    <>
+    <Box
+      sx={{
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        gap: "10px",
+        padding: "10px",
+        flexDirection: "column",
+      }}
+    >
       <Box
         sx={{
-          position: "relative",
+          margin: 1,
+          overflowY: "auto",
+          // overflowX: "hidden",
           display: "flex",
           flexDirection: "column",
-          minHeight: "100%",
-          paddingBottom: 1,
+          height: "100%",
+          width: "100%",
         }}
       >
         <List
@@ -53,23 +56,29 @@ function Chat() {
             flexDirection: "column",
             justifyContent: "flex-end",
             padding: theme.spacing(2),
-            minWidth: "100%",
-            maxHeight: "100%",
+            maxWidth: "100%",
           }}
         >
-          {messages.map((message) => {
-            return (
-              <ChatMessage
-                messRef={messRef}
-                message={message}
-                key={message.id}
-              />
-            );
-          })}
+          {currentChat[0]?.messages &&
+            [...currentChat[0]?.messages]
+              .sort((message1, message2) =>
+                message1.createDate - message2.createDate > 0 ? 1 : -1
+              )
+              .map((message) => {
+                return (
+                  <ChatMessage
+                    messRef={messRef}
+                    message={message}
+                    key={message.id}
+                  />
+                );
+              })}
         </List>
       </Box>
-      <ChatInput id={id} />
-    </>
+      <Box>
+        <ChatInput id={id} />
+      </Box>
+    </Box>
   );
 }
 export default Chat;

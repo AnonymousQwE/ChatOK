@@ -66,8 +66,6 @@ export default function Search() {
           }}
           onBlur={() => {
             setActive(false);
-            setResult([]);
-            setSearchText("");
           }}
           onKeyUp={async () => {
             setResult([]);
@@ -84,8 +82,8 @@ export default function Search() {
 
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-              console.log(doc);
-              setResult([...result, { id: doc.id, ...doc.data() }]);
+              const currentResult = result.filter((res) => res.id !== doc.id);
+              setResult([...currentResult, { id: doc.id, ...doc.data() }]);
             });
             setStatus("loaded");
           }}
@@ -94,7 +92,12 @@ export default function Search() {
           inputProps={{ "aria-label": "search" }}
         />
       </Box>
-      <SearchResult status={status} active={active} result={result} />
+      <SearchResult
+        searchText={searchText}
+        status={status}
+        active={active}
+        result={result}
+      />
     </Box>
   );
 }

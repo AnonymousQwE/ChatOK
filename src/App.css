@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 } */
+
+* {
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+::-webkit-scrollbar {
+  width: 7px;
+  background-color: #51a8ff96;
+  -webkit-box-shadow: 5px 5px 5px -5px rgba(0, 0, 0, 0.8) inset;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 3px;
+}
