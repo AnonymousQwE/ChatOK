@@ -5,21 +5,23 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Paper,
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { setContextMenu } from "../../store/systemSlice";
+import { setContextMenu } from "../../redux/slices/systemSlice";
 import { formatTimestamp } from "../../utils/time";
-import ContextMenu from "./ContextMenu";
+import { getChatUser } from "../../utils/query";
 
 export default function ChatListItem({ chat }) {
+  const { currentUser: user } = useSelector((state) => state.user);
+  const [currentChatUser, setCurrentChatUser] = useState({});
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
-    console.log(event);
     dispatch(
       setContextMenu({
         active: true,
@@ -27,24 +29,24 @@ export default function ChatListItem({ chat }) {
         ref: chat.id,
       })
     );
-    console.log({
-      mouseX: event.clientX,
-      mouseY: event.clientY,
-    });
-  };
-
-  const handleClose = () => {
-    setContextMenu(null);
   };
 
   const theme = useTheme();
-  const navigate = useNavigate();
-
+  useEffect(() => {
+    getChatUser(
+      chat.members.filter((e) => {
+        return e != user.id;
+      })[0]
+    ).then((res) => setCurrentChatUser(res));
+  }, []);
   const dataAtr = { "data-id": chat.id };
   return (
     <>
       <NavLink
-        style={{ textDecoration: "none", color: theme.palette.text.primary }}
+        style={{
+          textDecoration: "none",
+          color: theme.palette.text.primary,
+        }}
         to={`chat/${chat.id}`}
       >
         {({ isActive, isPending }) => (
@@ -52,15 +54,19 @@ export default function ChatListItem({ chat }) {
             {...dataAtr}
             onContextMenu={handleContextMenu}
             sx={{
-              background: isActive && theme.palette.primary.light,
+              background: isActive && theme.palette.primary.dark,
               position: "relative",
+              borderRadius: 2,
+              boxSizing: "border-box",
+              marginBottom: 1,
               zIndex: 10,
               transition: "0.2s",
+              boxShadow: "0px 0px 3px 1px " + theme.palette.primary.light,
               "&:hover": {
-                background: theme.palette.primary.dark,
+                background: theme.palette.primary.light,
                 cursor: "pointer",
               },
-              overflow: "hidden",
+              // overflow: "hidden",
             }}
             key={chat.id}
           >
@@ -81,37 +87,63 @@ export default function ChatListItem({ chat }) {
               >
                 <Avatar
                   sx={{ width: 60, height: 60, marginRight: 1 }}
-                  src={chat.avatar}
-                  alt={chat.title}
+                  src={currentChatUser?.avatar}
+                  alt={currentChatUser?.displayName}
                 ></Avatar>
               </Badge>
             </ListItemAvatar>
             <ListItemText
               primary={
                 chat.type === "dialog" ? (
-                  <Typography>{chat.id}</Typography>
+                  <Typography>{currentChatUser?.displayName}</Typography>
                 ) : (
-                  <Typography variant={"body1"}>{chat.title}</Typography>
+                  <Typography variant={"body1"}>
+                    {currentChatUser?.displayName}
+                  </Typography>
                 )
               }
               secondary={
-                <>
-                  <Typography
-                    component="span"
-                    variant="p"
-                    sx={{ fontSize: 10 }}
-                  >
-                    {formatTimestamp(chat.lastMessageTime)}
-                  </Typography>
-                  <br />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <Typography
                     component="span"
                     variant="body2"
                     color="textPrimary"
                   >
-                    {chat?.lastMessage?.substring(0, 18) + "..."}
+                    {chat.lastMessageOwner === user.id ? (
+                      <Typography
+                        variant="p"
+                        sx={{ marginRight: 0.5, fontWeight: 600 }}
+                      >
+                        Вы:
+                      </Typography>
+                    ) : (
+                      ""
+                    )}
+                    {chat.lastMessage.length > 20
+                      ? chat?.lastMessage?.substring(0, 15) + "..."
+                      : chat.lastMessage}
                   </Typography>
-                </>
+                  <Typography
+                    component="span"
+                    variant="p"
+                    sx={{
+                      marginLeft: 0.5,
+                      fontSize: 9,
+                      fontWeight: 600,
+                      background: theme.palette.primary.main,
+                      textAlign: "center",
+                      padding: 0.3,
+                      borderRadius: 1,
+                    }}
+                  >
+                    {formatTimestamp(chat.lastMessageTime).substring(12, 20)}
+                  </Typography>
+                </Box>
               }
             />
           </ListItem>

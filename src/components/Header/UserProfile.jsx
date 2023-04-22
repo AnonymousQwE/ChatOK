@@ -12,14 +12,16 @@ import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
 import { blue } from "@mui/material/colors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { Box, DialogActions, DialogContent, TextField } from "@mui/material";
+import { userActions } from "../../redux/user/userActions";
 
 const emails = ["username@gmail.com", "user02@gmail.com"];
 
 export default function UserProfile() {
-  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { currentUser: user } = useSelector((state) => state.user);
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(emails[1]);
 
@@ -37,11 +39,6 @@ export default function UserProfile() {
       <Avatar
         sx={{ cursor: "pointer" }}
         alt={user?.displayName}
-        // onClick={async () => {
-        //   if (!user) {
-        //     dispatch(signInGoogle());
-        //   } else dispatch(logoutUser());
-        // }}
         onClick={handleClickOpen}
         src={user?.photoURL}
       />
@@ -57,6 +54,7 @@ export default function UserProfile() {
 
 function UserProfileData(props) {
   const { user, onClose, selectedValue, open } = props;
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -80,11 +78,13 @@ function UserProfileData(props) {
           <Avatar
             sx={{ width: 70, height: 70 }}
             alt={user?.displayName}
-            // onClick={async () => {
-            //   if (!user) {
-            //     dispatch(signInGoogle());
-            //   } else dispatch(logoutUser());
-            // }}
+            onClick={async (e) => {
+              e.preventDefault();
+              console.log(user)
+              if (user?.id) {
+                dispatch({ type: userActions.LOGOUT_USER_SAGA });
+              } else dispatch({ type: userActions.LOGIN_USER_SAGA });
+            }}
             src={user?.photoURL}
           />
           {user?.displayName}

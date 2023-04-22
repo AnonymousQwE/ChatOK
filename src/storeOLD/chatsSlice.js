@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createNewMessage, syncUserChats } from "./chatsThunk";
+import { createNewMessage } from "./chatsThunk";
 
 const userSlice = createSlice({
   name: "chats",
   initialState: {
     messages: [],
+    currentUserChat: {},
     chats: [],
     status: null,
     notify: [],
@@ -34,16 +35,16 @@ const userSlice = createSlice({
     builder.addCase(syncUserChats.pending, (state) => {
       state.status = "loading";
     });
-    builder.addCase(syncUserChats.fulfilled, (state, action) => {
-      state.status = "loaded";
-    });
-    builder.addCase(syncUserChats.rejected, (state, action) => {
-      state.notify.push({ type: "error", content: action.payload });
-      state.status = "rejected";
-    });
-    builder.addCase(createNewMessage.pending, (state) => {
-      state.status = "loading";
-    });
+    // builder.addCase(syncUserChats.fulfilled, (state, action) => {
+    //   state.status = "loaded";
+    // });
+    // builder.addCase(syncUserChats.rejected, (state, action) => {
+    //   state.notify.push({ type: "error", content: action.payload });
+    //   state.status = "rejected";
+    // });
+    // builder.addCase(createNewMessage.pending, (state) => {
+    //   state.status = "loading";
+    // });
     builder.addCase(createNewMessage.fulfilled, (state, action) => {
       state.status = "loaded";
     });

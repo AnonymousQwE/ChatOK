@@ -10,42 +10,38 @@ import SearchItem from "./SearchItem";
 import { Box } from "@mui/system";
 
 export default function SearchResult({ status, active, result, searchText }) {
-  return status === "loading" && active ? (
-    <Box
-      sx={{
-        position: "absolute",
-        right: 0,
-        marginTop: 0.5,
-        width: "100%",
-        maxWidth: "26ch",
-        bgcolor: "background.paper",
-      }}
-    >
-      <Typography sx={{ color: "black" }}>LOADING</Typography>
-    </Box>
-  ) : (
+  return (
     <List
       sx={{
-        display:
-          (active && result.length) ||
-          status == "loading" ||
-          (active && searchText)
-            ? "block"
-            : "none",
         position: "absolute",
         right: 0,
+        // display:
+        //   (active && result.length) ||
+        //   status == "loading" ||
+        //   (active && searchText)
+        //     ? "flex"
+        //     : "none",
+        display: searchText ? "flex" : "none",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         marginTop: 0.5,
         width: "100%",
         maxWidth: "26ch",
+        minHeight: "50px",
         bgcolor: "background.paper",
       }}
     >
-      {result.length ? (
+      {active && status === "loading" ? (
+        <Typography sx={{ color: "black" }}>LOADING</Typography>
+      ) : result.length ? (
         result.map((res) => {
           return <SearchItem key={res.id} res={res} />;
         })
+      ) : searchText ? (
+        <Typography sx={{ color: "black" }}>"РЕЗУЛЬТАТОВ НЕТ"</Typography>
       ) : (
-        <Typography sx={{ color: "red" }}>"РЕЗУЛЬТАТОВ НЕТ"</Typography>
+        ""
       )}
     </List>
   );

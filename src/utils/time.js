@@ -53,6 +53,5 @@ export const generateTextToTime = (timestamp) => {
       break;
   }
 
-  console.log(answ);
   return answ;
 };

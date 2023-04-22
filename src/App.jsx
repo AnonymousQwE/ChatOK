@@ -10,20 +10,22 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Route, Routes } from "react-router-dom";
 import NoChat from "./components/Chat/NoChat";
-import { checkUser } from "./store/userThunk";
 import ContextMenu from "./components/Sidebar/ContextMenu";
-import { setContextMenu } from "./store/systemSlice";
+import Test from "./components/Test";
+import { userActions } from "./redux/user/userActions";
+import { setContextMenu } from "./storeOLD/systemSlice";
 
 function App() {
   const dispatch = useDispatch();
   const { contextMenu } = useSelector((state) => state.system);
   useEffect(() => {
-    dispatch(checkUser());
+    dispatch({ type: userActions.CHECK_USER_SAGA });
   }, []);
 
   return (
     <>
-      <Container
+      <Header />
+      <Box
         onContextMenu={(e) => {
           e.preventDefault();
         }}
@@ -31,9 +33,8 @@ function App() {
           contextMenu.active &&
             dispatch(setContextMenu({ active: false, position: null }));
         }}
-        maxWidth="lg"
+        maxWidth="xl"
       >
-        <Header />
         <Grid
           container
           sx={{
@@ -58,7 +59,7 @@ function App() {
             </Routes>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
       {contextMenu.active && <ContextMenu />}
     </>
   );

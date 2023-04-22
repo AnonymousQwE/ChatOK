@@ -10,9 +10,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { formatTimestamp } from "../../utils/time";
 
-export default function ChatMessage({ messRef, message }) {
+export default function ChatMessage({ messRef, message, owner: chatUser }) {
   const theme = useTheme();
-  const { user } = useSelector((state) => state.user);
+  const { currentUser: user } = useSelector((state) => state.user);
 
   const owner =
     message.owner === user?.id
@@ -118,7 +118,7 @@ export default function ChatMessage({ messRef, message }) {
           <Avatar
             sx={{ margin: "0 auto" }}
             alt={message.owner?.displayName}
-            src={message.owner?.photoURL}
+            src={chatUser?.photoURL}
           />
         </ListItemAvatar>
         <Box
@@ -144,9 +144,10 @@ export default function ChatMessage({ messRef, message }) {
               sx={{
                 display: owner === "system" && "none",
                 fontSize: 12,
+                fontWeight: 600,
               }}
             >
-              {message.owner.substring(0, 10)}
+              {chatUser?.displayName}
             </Typography>
             <Typography sx={{ fontSize: 10 }}>
               {formatTimestamp(message.createDate)}

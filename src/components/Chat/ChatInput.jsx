@@ -4,30 +4,20 @@ import { addDoc, collection, setDoc, Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../firebase-setting";
-import { createNewMessage } from "../../store/chatsThunk";
+import { createNewMessage } from "../../storeOLD/chatsThunk";
+import { chatActions } from "../../redux/chat/chatAction";
 
 export default function ChatInput({ id }) {
   const [messageText, setMessageText] = useState("");
 
-  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (messageText.trim() !== "") {
-      const newDate = new Date();
-      const newMessage = {
-        chatId: id,
-        createDate: Timestamp.now(),
-        owner: user.id,
-        text: messageText.trim(),
-        file: null,
-        status: {
-          send: true,
-          read: false,
-          error: false,
-        },
-      };
-      dispatch(createNewMessage({ chatId: id, newMessage }));
+      dispatch({
+        type: chatActions.SEND_MESSAGE_SAGA,
+        payload: { chatId: id, text: messageText.trim() },
+      });
       setMessageText("");
     }
   };
