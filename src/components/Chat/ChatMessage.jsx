@@ -6,11 +6,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { forwardRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { formatTimestamp } from "../../utils/time";
+import { motion } from "framer-motion";
 
-export default function ChatMessage({ messRef, message, owner: chatUser }) {
+function ChatMessage({ messRef, message, owner: chatUser }, ref) {
   const theme = useTheme();
   const { currentUser: user } = useSelector((state) => state.user);
 
@@ -98,10 +99,14 @@ export default function ChatMessage({ messRef, message, owner: chatUser }) {
       return receivedMessage;
     }
   };
+
+  useEffect(() => {}, []);
+
   return (
-    <>
+    <Box ref={ref}>
       <ListItem
-        ref={messRef}
+        onClick={(e) => console.log(e.clientY)}
+        ref={message.status.read ? messRef : messRef}
         sx={{
           display: "flex",
           alignItems: "flex-end",
@@ -111,8 +116,7 @@ export default function ChatMessage({ messRef, message, owner: chatUser }) {
       >
         <ListItemAvatar
           sx={{
-            display: "flex",
-            display: owner === "system" && "none",
+            display: owner === "system" ? "none" : "flex",
           }}
         >
           <Avatar
@@ -180,6 +184,9 @@ export default function ChatMessage({ messRef, message, owner: chatUser }) {
         </ListItem>
       )}
       {/* <Divider /> */}
-    </>
+    </Box>
   );
 }
+
+const ref = forwardRef(ChatMessage);
+export default motion(ref);

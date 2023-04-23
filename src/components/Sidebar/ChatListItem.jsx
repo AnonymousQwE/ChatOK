@@ -9,14 +9,15 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { setContextMenu } from "../../redux/slices/systemSlice";
 import { formatTimestamp } from "../../utils/time";
 import { getChatUser } from "../../utils/query";
+import { motion } from "framer-motion";
 
-export default function ChatListItem({ chat }) {
+function ChatListItem({ chat }, ref) {
   const { currentUser: user } = useSelector((state) => state.user);
   const [currentChatUser, setCurrentChatUser] = useState({});
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ export default function ChatListItem({ chat }) {
   }, []);
   const dataAtr = { "data-id": chat.id };
   return (
-    <>
+    <Box ref={ref}>
       <NavLink
         style={{
           textDecoration: "none",
@@ -93,6 +94,7 @@ export default function ChatListItem({ chat }) {
               </Badge>
             </ListItemAvatar>
             <ListItemText
+              component={"div"}
               primary={
                 chat.type === "dialog" ? (
                   <Typography>{currentChatUser?.displayName}</Typography>
@@ -104,6 +106,7 @@ export default function ChatListItem({ chat }) {
               }
               secondary={
                 <Box
+                  component={"span"}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -149,6 +152,10 @@ export default function ChatListItem({ chat }) {
           </ListItem>
         )}
       </NavLink>
-    </>
+    </Box>
   );
 }
+
+const ref = forwardRef(ChatListItem);
+
+export default motion(ref);

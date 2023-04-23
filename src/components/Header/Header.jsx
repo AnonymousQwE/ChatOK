@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 function Header() {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
+
   return (
     <AppBar position="static">
       <Toolbar sx={{ gap: 2 }}>

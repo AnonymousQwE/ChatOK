@@ -2,9 +2,7 @@ import { Send } from "@mui/icons-material";
 import { Box, IconButton, TextField } from "@mui/material";
 import { addDoc, collection, setDoc, Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { db } from "../../firebase-setting";
-import { createNewMessage } from "../../storeOLD/chatsThunk";
+import { useDispatch } from "react-redux";
 import { chatActions } from "../../redux/chat/chatAction";
 
 export default function ChatInput({ id }) {

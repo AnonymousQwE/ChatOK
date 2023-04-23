@@ -1,8 +1,6 @@
 import { Box, Grid } from "@mui/material";
-import { Container } from "@mui/system";
 import "./App.css";
 import Chat from "./components/Chat";
-import ChatInput from "./components/Chat/ChatInput";
 import Header from "./components/Header/Header";
 import Sidebar from "components/Sidebar";
 import { useEffect, useState } from "react";
@@ -11,9 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import NoChat from "./components/Chat/NoChat";
 import ContextMenu from "./components/Sidebar/ContextMenu";
-import Test from "./components/Test";
 import { userActions } from "./redux/user/userActions";
-import { setContextMenu } from "./storeOLD/systemSlice";
+// import { setContextMenu } from "./storeOLD/systemSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -29,10 +26,10 @@ function App() {
         onContextMenu={(e) => {
           e.preventDefault();
         }}
-        onClick={(e) => {
-          contextMenu.active &&
-            dispatch(setContextMenu({ active: false, position: null }));
-        }}
+        // onClick={(e) => {
+        //   contextMenu.active &&
+        //     dispatch(setContextMenu({ active: false, position: null }));
+        // }}
         maxWidth="xl"
       >
         <Grid

@@ -6,8 +6,9 @@ import logger from "redux-logger";
 import { systemSlice } from "./slices/systemSlice";
 import { chatSlice } from "./slices/chatSlice";
 
+const middleware = [];
 let sagaMiddleware = createSagaMiddleware();
-const middleware = [...getDefaultMiddleware({ thunk: false }), sagaMiddleware];
+middleware.push(sagaMiddleware);
 
 const store = configureStore({
   reducer: {

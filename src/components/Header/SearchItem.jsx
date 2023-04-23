@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { createNewDialog } from "../../storeOLD/chatsThunk";
 
 export default function SearchItem({ res }) {
   const theme = useTheme();
@@ -26,9 +25,9 @@ export default function SearchItem({ res }) {
         },
         transition: ".5s",
       }}
-      onClick={() => {
-        dispatch(createNewDialog({ userId: res.id }));
-      }}
+      // onClick={() => {
+      //   dispatch(createNewDialog({ userId: res.id }));
+      // }}
     >
       <ListItem sx={{ justifyContent: "center" }} alignItems="center">
         <ListItemAvatar>

@@ -9,13 +9,17 @@ import ChatInput from "./ChatInput";
 import { chatActions } from "../../redux/chat/chatAction";
 import { getChatUser } from "../../utils/query";
 import { setCurrentChatUser } from "../../redux/slices/chatSlice";
+import ChatHeader from "./ChatHeader";
+import { motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
+import MessageList from "./MessageList";
 
 function Chat() {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
   const { currentChat } = useSelector((state) => state.chat);
+  const { scroll, setScroll } = useState(0);
 
-  const theme = useTheme();
   const messRef = useRef(null);
   const chatRef = useRef(null);
   const { id } = useParams();
@@ -29,7 +33,6 @@ function Chat() {
     if (currentChat.members && user?.id) {
       getChatUser(currentChat.members.filter((u) => u !== user.id)[0]).then(
         (chatUser) => {
-          console.log(chatUser);
           dispatch(
             setCurrentChatUser({
               ...chatUser,
@@ -42,11 +45,19 @@ function Chat() {
   }, [currentChat.members, user.id]);
 
   useEffect(() => {
-    messRef.current?.scrollIntoView({
-      block: "end",
-      behavior: "smooth",
-    });
+    if (messRef.current) {
+      messRef.current?.scrollIntoView({
+        block: "end",
+        behavior: "smooth",
+      });
+    }
   }, [currentChat?.messages, currentChat.chatUser, chatRef.current]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      setScroll(window.scrollY);
+    });
+  }, []);
 
   return (
     <Box
@@ -61,68 +72,14 @@ function Chat() {
         paddingX: 1,
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          background: theme.palette.primary.main,
-          borderRadius: 2.5,
-          padding: 1,
-          gap: 1,
-          width: "100%",
-        }}
-      >
-        <Avatar src={currentChat.chatUser?.photoURL} />
-        <Box>
-          <Typography variant="body1">
-            {currentChat.chatUser?.displayName}
-          </Typography>
-          <Typography sx={{ fontSize: 10 }} variant="subtitle2">
-            был онлайн {new Date().toLocaleTimeString()}
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box
-        ref={chatRef}
-        sx={{
-          margin: 1,
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        <List
-          sx={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            padding: theme.spacing(2),
-            maxWidth: "100%",
-          }}
-        >
-          {currentChat?.messages &&
-            currentChat.chatUser !== null &&
-            [...currentChat?.messages]
-              .sort((message1, message2) =>
-                message1.createDate - message2.createDate > 0 ? 1 : -1
-              )
-              .map((message) => {
-                return (
-                  <ChatMessage
-                    owner={
-                      message.owner === user.id ? user : currentChat.chatUser
-                    }
-                    messRef={messRef}
-                    message={message}
-                    key={message.id}
-                  />
-                );
-              })}
-        </List>
-      </Box>
+      <ChatHeader currentChat={currentChat} />
+      <MessageList
+        layout
+        messRef={messRef}
+        user={user}
+        currentChat={currentChat}
+        chatRef={chatRef}
+      />
       <Box>
         <ChatInput id={id} />
       </Box>
