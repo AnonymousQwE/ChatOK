@@ -48,16 +48,9 @@ function Chat() {
     if (messRef.current) {
       messRef.current?.scrollIntoView({
         block: "end",
-        behavior: "smooth",
       });
     }
   }, [currentChat?.messages, currentChat.chatUser, chatRef.current]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", () => {
-      setScroll(window.scrollY);
-    });
-  }, []);
 
   return (
     <Box
@@ -74,12 +67,12 @@ function Chat() {
     >
       <ChatHeader currentChat={currentChat} />
       <MessageList
-        layout
         messRef={messRef}
         user={user}
         currentChat={currentChat}
         chatRef={chatRef}
       />
+
       <Box>
         <ChatInput id={id} />
       </Box>

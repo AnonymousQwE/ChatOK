@@ -103,10 +103,10 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
   useEffect(() => {}, []);
 
   return (
-    <Box ref={ref}>
+    <>
       <ListItem
+        ref={ref}
         onClick={(e) => console.log(e.clientY)}
-        ref={message.status.read ? messRef : messRef}
         sx={{
           display: "flex",
           alignItems: "flex-end",
@@ -115,6 +115,7 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
         }}
       >
         <ListItemAvatar
+          ref={message.status.read ? messRef : messRef}
           sx={{
             display: owner === "system" ? "none" : "flex",
           }}
@@ -184,7 +185,7 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
         </ListItem>
       )}
       {/* <Divider /> */}
-    </Box>
+    </>
   );
 }
 

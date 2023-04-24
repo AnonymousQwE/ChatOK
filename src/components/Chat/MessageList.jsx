@@ -1,18 +1,22 @@
 import React, { forwardRef } from "react";
 import ChatMessage from "./ChatMessage";
 import { Box, List, useTheme } from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 function MessageList({ currentChat, chatRef, user, messRef }, ref) {
-  const variants = {
+  const newMessage = {
     visible: (i) => ({
       opacity: 1,
+      x: 0,
       transition: {
-        delay: i * 0.2,
+        ease: "easeOut",
+        duration: 0.7,
+        // delay: i > 5 ? 0.1 : i * 0.1,
       },
     }),
     hidden: {
       opacity: 0,
+      x: -200,
     },
   };
   const theme = useTheme();
@@ -20,7 +24,7 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
     <Box
       ref={(chatRef, ref)}
       onScroll={(e) => {
-        console.log(e.target.scrollTop);
+        console.log(window);
       }}
       sx={{
         margin: 1,
@@ -42,36 +46,28 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
           maxWidth: "100%",
         }}
       >
-        <AnimatePresence initial={false}>
-          {currentChat?.messages &&
-            currentChat.chatUser !== null &&
-            [...currentChat?.messages]
-              .sort((message1, message2) =>
-                message1.createDate - message2.createDate > 0 ? 1 : -1
-              )
-              .map((message, i) => {
-                if (!message.status.read) {
-                  // console.log("not read");
-                } else {
-                  console.log("read");
-                }
-                return (
-                  <ChatMessage
-                    layout
-                    variants={variants}
-                    initial={"hidden"}
-                    animate={"visible"}
-                    owner={
-                      message.owner === user.id ? user : currentChat.chatUser
-                    }
-                    messRef={messRef}
-                    message={message}
-                    key={message.id}
-                    custom={i}
-                  />
-                );
-              })}
-        </AnimatePresence>
+        {currentChat?.messages &&
+          currentChat.chatUser !== null &&
+          [...currentChat?.messages]
+            .sort((message1, message2) =>
+              message1.createDate - message2.createDate > 0 ? 1 : -1
+            )
+            .map((message, i) => {
+              return (
+                <ChatMessage
+                  variants={newMessage}
+                  initial={"hidden"}
+                  animate={"visible"}
+                  owner={
+                    message.owner === user.id ? user : currentChat.chatUser
+                  }
+                  messRef={messRef}
+                  message={message}
+                  key={message.id}
+                  custom={i}
+                />
+              );
+            })}
       </List>
     </Box>
   );
