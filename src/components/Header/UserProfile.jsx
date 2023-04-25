@@ -80,7 +80,6 @@ function UserProfileData(props) {
             alt={user?.displayName}
             onClick={async (e) => {
               e.preventDefault();
-              console.log(user);
               if (user?.id) {
                 dispatch({ type: userActions.LOGOUT_USER_SAGA });
               } else dispatch({ type: userActions.LOGIN_USER_SAGA });

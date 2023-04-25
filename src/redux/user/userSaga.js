@@ -2,7 +2,7 @@ import { call, put } from "redux-saga/effects";
 import {
   checkUser,
   getUserDataFormDB,
-  loginUser,
+  googleLoginUser,
   logoutUser,
   setOnline,
 } from "./userAPI";
@@ -12,15 +12,13 @@ export function* checkUserSaga() {
   try {
     const currentUser = yield call(() => checkUser());
     if (currentUser !== null) {
-      const userDatafromDB = yield call(() =>
-        getUserDataFormDB(currentUser.id)
-      );
+      const userDatafromDB = yield call(() => getUserDataFormDB(currentUser));
       yield call(() => setOnline(currentUser.id));
       yield put(
         setUser({
           ...currentUser,
           ...userDatafromDB,
-          createDate: userDatafromDB.createDate.toMillis(),
+          createDate: userDatafromDB?.createDate?.toMillis(),
         })
       );
     }
@@ -30,18 +28,18 @@ export function* checkUserSaga() {
   }
 }
 
-export function* loginUserSaga() {
+export function* googleLoginUserSaga() {
   try {
-    let result = yield call(() => loginUser());
-    if (result !== null) {
-      let userDatafromDB = yield call(() => getUserDataFormDB(result.id));
-      yield call(() => setOnline(result.id));
+    const currentUser = yield call(() => googleLoginUser());
+    if (currentUser !== null) {
+      const userDatafromDB = yield call(() => getUserDataFormDB(currentUser));
+      yield call(() => setOnline(currentUser.id));
 
       yield put(
         setUser({
-          ...result,
+          ...currentUser,
           ...userDatafromDB,
-          createDate: userDatafromDB.createDate.toMillis(),
+          createDate: userDatafromDB?.createDate?.toMillis(),
         })
       );
     }

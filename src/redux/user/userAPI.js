@@ -8,7 +8,7 @@ import {
 } from "firebase/auth";
 import { auth, db, provider, realTimeDb } from "../../firebase-setting";
 import { onDisconnect, onValue, ref, set } from "firebase/database";
-import { Timestamp, doc, getDoc } from "firebase/firestore";
+import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
 
 export const checkUser = async () => {
   let currentUser;
@@ -72,7 +72,7 @@ export const setOnline = (id) => {
   }
 };
 
-export const loginUser = async () => {
+export const googleLoginUser = async () => {
   let currentUser;
   if (
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(
@@ -94,6 +94,7 @@ export const loginUser = async () => {
         };
         currentUser = {
           ...user,
+          ...serverUser,
         };
       })
       .catch((error) => {
@@ -128,6 +129,7 @@ export const loginUser = async () => {
         };
         currentUser = {
           ...user,
+          ...serverUser,
         };
       })
       .catch((error) => {
@@ -137,14 +139,20 @@ export const loginUser = async () => {
   return currentUser;
 };
 
-export const getUserDataFormDB = async (id) => {
-  const userRef = doc(db, "users", id);
-  const docSnap = await getDoc(userRef);
+export const getUserDataFormDB = async (currentUser) => {
+  const userRef = doc(db, "users", currentUser.id);
+  const userSnap = await getDoc(userRef);
   let currentUserData;
-  if (docSnap.exists()) {
-    currentUserData = docSnap.data();
+  if (userSnap.exists()) {
+    currentUserData = userSnap.data();
   } else {
-    console.log("No such document!");
+    const newDoc = await setDoc(userRef, currentUser);
+    const NewUserSnap = await getDoc(userRef);
+    if (NewUserSnap.exists()) {
+      currentUserData = NewUserSnap.data();
+    } else {
+      console.log("ERROR GET USER DATA");
+    }
   }
   return currentUserData;
 };
