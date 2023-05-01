@@ -5,7 +5,7 @@ import {
   checkUserSaga,
   googleLoginUserSaga,
   logoutUserSaga,
-  registerUserSaga,
+  registerUserEmailSaga,
 } from "./user/userSaga";
 import { chatActions } from "./chat/chatAction";
 import {
@@ -17,7 +17,7 @@ import {
 
 export function* rootSaga() {
   yield takeEvery(userActions.CHECK_USER_SAGA, checkUserSaga);
-  yield takeEvery(userActions.REGISTER_USER_SAGA, registerUserSaga);
+  yield takeEvery(userActions.REGISTER_USER_SAGA, registerUserEmailSaga);
   yield takeEvery(userActions.LOGOUT_USER_SAGA, logoutUserSaga);
   yield takeEvery(userActions.LOGIN_USER_SAGA, googleLoginUserSaga);
   yield takeEvery(chatActions.GET_USER_CHATS_SAGA, chatsListenerSaga);

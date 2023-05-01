@@ -1,6 +1,7 @@
 import { AccountCircle, AlternateEmail, Key } from "@mui/icons-material";
 import {
   Box,
+  Button,
   FormControl,
   Grid,
   Input,
@@ -10,23 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Link } from "react-router-dom";
 
-const LoginUser = () => {
+const LoginUser = ({ setReg }) => {
   return (
-    <Grid
-      item
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 3,
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-      }}
-      xs={3}
-    >
+    <>
       <Typography variant="h3">Авторизация</Typography>
-      <FormControl variant="standard">
+      <FormControl fullWidth variant="standard">
         <InputLabel htmlFor="email">Ваш Email</InputLabel>
         <Input
           id="email"
@@ -37,7 +28,7 @@ const LoginUser = () => {
           }
         />
       </FormControl>
-      <FormControl variant="standard">
+      <FormControl fullWidth variant="standard">
         <InputLabel htmlFor="email">Ваш пароль</InputLabel>
         <Input
           id="input-with-icon-adornment"
@@ -48,7 +39,20 @@ const LoginUser = () => {
           }
         />
       </FormControl>
-    </Grid>
+      <Button variant="contained">Войти</Button>
+      <Typography variant="p">
+        Еще нет аккаунта?{" "}
+        <Link
+          onClick={(e) => {
+            e.preventDefault();
+            setReg(true);
+          }}
+          href={""}
+        >
+          Зарегистрироваться
+        </Link>
+      </Typography>
+    </>
   );
 };
 

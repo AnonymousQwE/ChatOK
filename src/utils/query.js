@@ -6,7 +6,6 @@ export function generateQuery(userId) {
     return query(
       collection(db, "chats"),
       where("members", "array-contains", userId)
-      // where("members", "array-contains", userId)
     );
   }
 }

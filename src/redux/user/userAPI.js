@@ -1,5 +1,6 @@
 import {
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
   getRedirectResult,
   onAuthStateChanged,
   signInWithPopup,
@@ -16,7 +17,7 @@ export const checkUser = async () => {
   await getRedirectResult(auth)
     .then((result) => {
       if (result) {
-        const { displayName, email, photoURL, uid, phoneNumber } = result?.user;
+        const { displayName, email, photoURL, uid, phoneNumber } = result.user;
         currentUser = { displayName, email, photoURL, id: uid, phoneNumber };
       } else {
         onAuthStateChanged(auth, (user) => {
@@ -146,7 +147,17 @@ export const getUserDataFormDB = async (currentUser) => {
   if (userSnap.exists()) {
     currentUserData = userSnap.data();
   } else {
-    const newDoc = await setDoc(userRef, currentUser);
+    const newUser = {
+      ...currentUser,
+      role: "user",
+      image: "",
+      createDate: Timestamp.now(),
+    };
+    console.log(newUser);
+    delete newUser.id;
+    delete newUser.password;
+    delete newUser.password2;
+    await setDoc(userRef, newUser);
     const NewUserSnap = await getDoc(userRef);
     if (NewUserSnap.exists()) {
       currentUserData = NewUserSnap.data();
@@ -155,6 +166,38 @@ export const getUserDataFormDB = async (currentUser) => {
     }
   }
   return currentUserData;
+};
+
+export const registerUserEmail = async (userData) => {
+  let newUser;
+  console.log(userData);
+  await createUserWithEmailAndPassword(auth, userData.email, userData.password)
+    .then((userCredential) => {
+      newUser = { ...userCredential.user, id: userCredential.user.uid };
+      delete newUser.uid;
+    })
+    .catch((error) => {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+
+  return { id: newUser.id, ...userData };
+};
+export const loginUserEmail = async (userData) => {
+  let newUser;
+  await signInWithEmailAndPassword(auth, userData.email, userData.password)
+    .then((userCredential) => {
+      newUser = { ...userCredential.user, id: userCredential.user.uid };
+      delete newUser.uid;
+    })
+    .catch((error) => {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+
+  return { id: newUser.id, ...userData };
 };
 
 export const logoutUser = () => {

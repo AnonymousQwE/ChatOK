@@ -4,6 +4,7 @@ import {
   getUserDataFormDB,
   googleLoginUser,
   logoutUser,
+  registerUserEmail,
   setOnline,
 } from "./userAPI";
 import { setUser } from "../slices/userSlice";
@@ -16,7 +17,6 @@ export function* checkUserSaga() {
       yield call(() => setOnline(currentUser.id));
       yield put(
         setUser({
-          ...currentUser,
           ...userDatafromDB,
           createDate: userDatafromDB?.createDate?.toMillis(),
         })
@@ -37,7 +37,6 @@ export function* googleLoginUserSaga() {
 
       yield put(
         setUser({
-          ...currentUser,
           ...userDatafromDB,
           createDate: userDatafromDB?.createDate?.toMillis(),
         })
@@ -49,17 +48,16 @@ export function* googleLoginUserSaga() {
   }
 }
 
-export function* registerUserSaga() {
+export function* registerUserEmailSaga({ payload }) {
   try {
-    let result = yield call(() => checkUser());
-    let userDatafromDB = yield call(() => getUserDataFormDB(result.id));
+    let user = yield call(() => registerUserEmail(payload));
+    let userDatafromDB = yield call(() => getUserDataFormDB(user));
 
-    yield call(() => setOnline(result.id));
+    yield call(() => setOnline(user.id));
     yield put(
       setUser({
-        ...result,
         ...userDatafromDB,
-        createDate: userDatafromDB.createDate.toMillis(),
+        createDate: userDatafromDB?.createDate?.toMillis(),
       })
     );
   } catch (e) {
