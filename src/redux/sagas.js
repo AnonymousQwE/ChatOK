@@ -4,6 +4,7 @@ import { takeEvery, takeLatest } from "redux-saga/effects";
 import {
   checkUserSaga,
   googleLoginUserSaga,
+  loginUserEmailSaga,
   logoutUserSaga,
   registerUserEmailSaga,
 } from "./user/userSaga";
@@ -17,7 +18,8 @@ import {
 
 export function* rootSaga() {
   yield takeEvery(userActions.CHECK_USER_SAGA, checkUserSaga);
-  yield takeEvery(userActions.REGISTER_USER_SAGA, registerUserEmailSaga);
+  yield takeEvery(userActions.REGISTER_EMAIL_USER_SAGA, registerUserEmailSaga);
+  yield takeEvery(userActions.LOGIN_EMAIL_USER_SAGA, loginUserEmailSaga);
   yield takeEvery(userActions.LOGOUT_USER_SAGA, logoutUserSaga);
   yield takeEvery(userActions.LOGIN_USER_SAGA, googleLoginUserSaga);
   yield takeEvery(chatActions.GET_USER_CHATS_SAGA, chatsListenerSaga);

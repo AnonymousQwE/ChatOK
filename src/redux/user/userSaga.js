@@ -3,13 +3,16 @@ import {
   checkUser,
   getUserDataFormDB,
   googleLoginUser,
+  loginUserEmail,
   logoutUser,
   registerUserEmail,
   setOnline,
 } from "./userAPI";
 import { setUser } from "../slices/userSlice";
+import { setLoadingStatus } from "../slices/systemSlice";
 
-export function* checkUserSaga() {
+export function* checkUserSaga({ payload }) {
+  payload.dispatch(setLoadingStatus("loading"));
   try {
     const currentUser = yield call(() => checkUser());
     if (currentUser !== null) {
@@ -26,6 +29,7 @@ export function* checkUserSaga() {
     console.log(e);
     yield put({ type: "CHECK_USER_FAILED" });
   }
+  payload.dispatch(setLoadingStatus("loaded"));
 }
 
 export function* googleLoginUserSaga() {
@@ -51,6 +55,25 @@ export function* googleLoginUserSaga() {
 export function* registerUserEmailSaga({ payload }) {
   try {
     let user = yield call(() => registerUserEmail(payload));
+    let userDatafromDB = yield call(() => getUserDataFormDB(user));
+
+    yield call(() => setOnline(user.id));
+    yield put(
+      setUser({
+        ...userDatafromDB,
+        createDate: userDatafromDB?.createDate?.toMillis(),
+      })
+    );
+  } catch (e) {
+    console.log(e);
+    yield put({ type: "REGISTER_USER_FALED" });
+  }
+}
+
+export function* loginUserEmailSaga({ dispatch, payload }) {
+  call();
+  try {
+    let user = yield call(() => loginUserEmail(payload));
     let userDatafromDB = yield call(() => getUserDataFormDB(user));
 
     yield call(() => setOnline(user.id));

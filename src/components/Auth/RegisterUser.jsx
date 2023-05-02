@@ -10,7 +10,6 @@ import {
   Button,
   FormControl,
   FormHelperText,
-  Grid,
   IconButton,
   Input,
   InputAdornment,
@@ -34,7 +33,7 @@ const RegisterUser = ({ setReg }) => {
   const onSubmit = (data, e) => {
     console.log(e);
     dispatch({
-      type: userActions.REGISTER_USER_SAGA,
+      type: userActions.REGISTER_EMAIL_USER_SAGA,
       payload: data,
     });
   };

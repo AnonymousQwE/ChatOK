@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getRedirectResult,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signInWithRedirect,
   signOut,
@@ -163,9 +164,10 @@ export const getUserDataFormDB = async (currentUser) => {
       currentUserData = NewUserSnap.data();
     } else {
       console.log("ERROR GET USER DATA");
+      return "error";
     }
   }
-  return currentUserData;
+  return { ...currentUserData, id: currentUser.id };
 };
 
 export const registerUserEmail = async (userData) => {
@@ -189,7 +191,6 @@ export const loginUserEmail = async (userData) => {
   await signInWithEmailAndPassword(auth, userData.email, userData.password)
     .then((userCredential) => {
       newUser = { ...userCredential.user, id: userCredential.user.uid };
-      delete newUser.uid;
     })
     .catch((error) => {
       console.log(error);

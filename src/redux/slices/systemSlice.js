@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const systemSlice = createSlice({
   name: "system",
   initialState: {
+    status: "loading",
     contextMenu: {
       active: false,
       position: null,
@@ -10,6 +11,10 @@ export const systemSlice = createSlice({
     },
   },
   reducers: {
+    setLoadingStatus: (state, action) => {
+      console.log(action);
+      return { ...state, status: action.payload };
+    },
     setContextMenu: (state, action) => {
       return { ...state, contextMenu: action.payload };
     },
@@ -22,4 +27,5 @@ export const systemSlice = createSlice({
   },
 });
 
-export const { setContextMenu, unsetContextMenu } = systemSlice.actions;
+export const { setContextMenu, unsetContextMenu, setLoadingStatus } =
+  systemSlice.actions;
