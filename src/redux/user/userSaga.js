@@ -12,7 +12,7 @@ import { setUser } from "../slices/userSlice";
 import { setLoadingStatus } from "../slices/systemSlice";
 
 export function* checkUserSaga({ payload }) {
-  payload.dispatch(setLoadingStatus("loading"));
+  yield put(setLoadingStatus("loading"));
   try {
     const currentUser = yield call(() => checkUser());
     if (currentUser !== null) {
@@ -29,7 +29,7 @@ export function* checkUserSaga({ payload }) {
     console.log(e);
     yield put({ type: "CHECK_USER_FAILED" });
   }
-  payload.dispatch(setLoadingStatus("loaded"));
+  yield put(setLoadingStatus("loaded"));
 }
 
 export function* googleLoginUserSaga() {
