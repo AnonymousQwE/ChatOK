@@ -15,17 +15,9 @@ import {
   setCurrentChatMessages,
 } from "../slices/chatSlice";
 import { sendNewMessage } from "./chatAPI";
+import { getUserDataFormDB } from "../user/userAPI";
 
-// export function* getUserChatsSaga({ data }) {
-//   try {
-//     let result = yield call(() => getUserChats());
-//     yield put(setUser({}));
-//   } catch (e) {
-//     console.log(e);
-//     yield put({ type: "REGISTER_USER_FALED" });
-//   }
-// }
-
+//Слушатель чатов
 export function* chatsListenerSaga() {
   const state = yield select();
 
@@ -47,6 +39,20 @@ export function* chatsListenerSaga() {
           lastMessageTime: currentChat.lastMessageTime.toMillis(),
         });
       });
+
+      allChats.map(async (chat) => {
+        const currentChatUser = chat.members.filter((e) => {
+          return e != state.user.currentUser.id;
+        })[0];
+        const userRef = doc(db, "users", currentChatUser);
+        const userSnap = await getDoc(userRef);
+        let currentUserData;
+        if (userSnap.exists()) {
+          currentUserData = userSnap.data();
+          return { ...chat, currentChatUser };
+        }
+      });
+
       emit(allChats);
     });
     return unsubscribe;
@@ -57,6 +63,8 @@ export function* chatsListenerSaga() {
     yield put(setChats(allChats));
   }
 }
+
+//Слушатель сообщений текущего чата
 export function* messageListenerSaga({ payload }) {
   const channel = new eventChannel((emit) => {
     let allMessages = [];
@@ -82,12 +90,14 @@ export function* messageListenerSaga({ payload }) {
   }
 }
 
+// Сага отправки сообщения
 export function* sendMessageSaga(action) {
   const state = yield select();
   const message = { ...action.payload, owner: state.user.currentUser.id };
   let result = yield call(() => sendNewMessage(message));
 }
 
+// Сага получения текущего чата
 export function* getCurrentChat(action) {
   const state = yield select();
   const chatQuery = query(doc(db, "chats", action.payload));

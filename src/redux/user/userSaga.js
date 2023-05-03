@@ -12,7 +12,7 @@ import { setUser } from "../slices/userSlice";
 import { setLoadingStatus } from "../slices/systemSlice";
 
 export function* checkUserSaga({ payload }) {
-  yield put(setLoadingStatus("loading"));
+  yield put(setLoadingStatus(true));
   try {
     const currentUser = yield call(() => checkUser());
     if (currentUser !== null) {
@@ -29,7 +29,7 @@ export function* checkUserSaga({ payload }) {
     console.log(e);
     yield put({ type: "CHECK_USER_FAILED" });
   }
-  yield put(setLoadingStatus("loaded"));
+  yield put(setLoadingStatus(false));
 }
 
 export function* googleLoginUserSaga() {
@@ -70,8 +70,8 @@ export function* registerUserEmailSaga({ payload }) {
   }
 }
 
-export function* loginUserEmailSaga({ dispatch, payload }) {
-  call();
+export function* loginUserEmailSaga({ payload }) {
+  yield put(setLoadingStatus(true));
   try {
     let user = yield call(() => loginUserEmail(payload));
     let userDatafromDB = yield call(() => getUserDataFormDB(user));
@@ -87,6 +87,7 @@ export function* loginUserEmailSaga({ dispatch, payload }) {
     console.log(e);
     yield put({ type: "REGISTER_USER_FALED" });
   }
+  yield put(setLoadingStatus(false));
 }
 
 export function* logoutUserSaga() {

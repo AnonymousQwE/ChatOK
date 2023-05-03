@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { setContextMenu } from "../../redux/slices/systemSlice";
 import { formatTimestamp } from "../../utils/time";
-import { getChatUser } from "../../utils/query";
 import { motion } from "framer-motion";
+import { getUserDataFormDB } from "../../redux/user/userAPI";
 
 function ChatListItem({ chat }, ref) {
   const { currentUser: user } = useSelector((state) => state.user);
@@ -34,7 +34,7 @@ function ChatListItem({ chat }, ref) {
 
   const theme = useTheme();
   useEffect(() => {
-    getChatUser(
+    getUserDataFormDB(
       chat.members.filter((e) => {
         return e != user.id;
       })[0]

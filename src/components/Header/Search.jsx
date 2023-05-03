@@ -73,7 +73,7 @@ export default function Search() {
             const q = query(
               collection(db, "users"),
               where(
-                "username",
+                "userName",
                 "==",
                 searchText.toLowerCase().replace("@", "")
               ),

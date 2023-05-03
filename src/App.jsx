@@ -1,6 +1,6 @@
 import "./App.css";
 import Header from "./components/Header/Header";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ContextMenu from "./components/Sidebar/ContextMenu";
@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });
   }, []);
-  if (status === "loading") return "LOADING";
+  if (status) return "✨LOADING✨";
   return (
     <>
       <Header />

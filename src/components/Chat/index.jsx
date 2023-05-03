@@ -7,7 +7,6 @@ import { db } from "../../firebase-setting";
 import { useParams } from "react-router-dom";
 import ChatInput from "./ChatInput";
 import { chatActions } from "../../redux/chat/chatAction";
-import { getChatUser } from "../../utils/query";
 import { setCurrentChatUser } from "../../redux/slices/chatSlice";
 import ChatHeader from "./ChatHeader";
 import { motion } from "framer-motion";

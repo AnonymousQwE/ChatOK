@@ -12,6 +12,8 @@ import { auth, db, provider, realTimeDb } from "../../firebase-setting";
 import { onDisconnect, onValue, ref, set } from "firebase/database";
 import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
 
+//Получение текущего статуса авторизации пользователя
+
 export const checkUser = async () => {
   let currentUser;
 
@@ -46,6 +48,7 @@ export const checkUser = async () => {
   return currentUser;
 };
 
+// Управление статусом пользователя (онлайн/не онлайн)
 export const setOnline = (id) => {
   if (id) {
     const userStatusDatabaseRef = ref(realTimeDb, "status/" + id);
@@ -74,6 +77,7 @@ export const setOnline = (id) => {
   }
 };
 
+// Авторизация через Google ПК/Андроид
 export const googleLoginUser = async () => {
   let currentUser;
   if (
@@ -141,6 +145,54 @@ export const googleLoginUser = async () => {
   return currentUser;
 };
 
+//Регистрация пользователя через Email
+export const registerUserEmail = async (userData) => {
+  let newUser;
+  console.log(userData);
+  await createUserWithEmailAndPassword(auth, userData.email, userData.password)
+    .then((userCredential) => {
+      newUser = { ...userCredential.user, id: userCredential.user.uid };
+      delete newUser.uid;
+    })
+    .catch((error) => {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+
+  return { id: newUser.id, ...userData };
+};
+
+//Авторизация пользователя через Email
+export const loginUserEmail = async (userData) => {
+  let newUser;
+  await signInWithEmailAndPassword(auth, userData.email, userData.password)
+    .then((userCredential) => {
+      newUser = { ...userCredential.user, id: userCredential.user.uid };
+    })
+    .catch((error) => {
+      console.log(error);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+
+  return { id: newUser.id, ...userData };
+};
+
+// Выход из аккаунта пользователя
+export const logoutUser = () => {
+  signOut(auth)
+    .then(() => {
+      return {};
+      // Sign-out successful.
+    })
+    .catch((error) => {
+      return error;
+      // An error happened.
+    });
+};
+
+// Получение информации о пользователе из БД
 export const getUserDataFormDB = async (currentUser) => {
   const userRef = doc(db, "users", currentUser.id);
   const userSnap = await getDoc(userRef);
@@ -168,47 +220,4 @@ export const getUserDataFormDB = async (currentUser) => {
     }
   }
   return { ...currentUserData, id: currentUser.id };
-};
-
-export const registerUserEmail = async (userData) => {
-  let newUser;
-  console.log(userData);
-  await createUserWithEmailAndPassword(auth, userData.email, userData.password)
-    .then((userCredential) => {
-      newUser = { ...userCredential.user, id: userCredential.user.uid };
-      delete newUser.uid;
-    })
-    .catch((error) => {
-      console.log(error);
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-
-  return { id: newUser.id, ...userData };
-};
-export const loginUserEmail = async (userData) => {
-  let newUser;
-  await signInWithEmailAndPassword(auth, userData.email, userData.password)
-    .then((userCredential) => {
-      newUser = { ...userCredential.user, id: userCredential.user.uid };
-    })
-    .catch((error) => {
-      console.log(error);
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-
-  return { id: newUser.id, ...userData };
-};
-
-export const logoutUser = () => {
-  signOut(auth)
-    .then(() => {
-      return {};
-      // Sign-out successful.
-    })
-    .catch((error) => {
-      return error;
-      // An error happened.
-    });
 };

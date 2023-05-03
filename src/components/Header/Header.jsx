@@ -18,6 +18,9 @@ function Header() {
             ChatOK
           </Link>
         </Typography>
+        <Typography>
+          <Link to={"/auth"}>Авторизация</Link>
+        </Typography>
         <Search />
 
         <UserProfile />

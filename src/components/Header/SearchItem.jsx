@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { getUserDataFormDB } from "../../redux/user/userAPI";
 
 export default function SearchItem({ res }) {
   const theme = useTheme();
@@ -25,9 +26,9 @@ export default function SearchItem({ res }) {
         },
         transition: ".5s",
       }}
-      // onClick={() => {
-      //   dispatch(createNewDialog({ userId: res.id }));
-      // }}
+      onClick={() => {
+        dispatch(getUserDataFormDB(res));
+      }}
     >
       <ListItem sx={{ justifyContent: "center" }} alignItems="center">
         <ListItemAvatar>
