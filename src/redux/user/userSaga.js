@@ -11,7 +11,7 @@ import {
 import { setUser } from "../slices/userSlice";
 import { setLoadingStatus } from "../slices/systemSlice";
 
-export function* checkUserSaga({ payload }) {
+export function* checkUserSaga() {
   yield put(setLoadingStatus(true));
   try {
     const currentUser = yield call(() => checkUser());
