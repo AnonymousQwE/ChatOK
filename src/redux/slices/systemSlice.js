@@ -12,7 +12,6 @@ export const systemSlice = createSlice({
   },
   reducers: {
     setLoadingStatus: (state, action) => {
-      console.log(action);
       return { ...state, status: action.payload };
     },
     setContextMenu: (state, action) => {

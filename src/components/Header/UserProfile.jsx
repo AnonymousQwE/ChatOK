@@ -81,8 +81,8 @@ function UserProfileData(props) {
             onClick={async (e) => {
               e.preventDefault();
               if (user?.id) {
-                dispatch({ type: userActions.LOGIN_USER_SAGA });
-              } else dispatch({ type: userActions.LOGOUT_USER_SAGA });
+                dispatch({ type: userActions.LOGOUT_USER_SAGA });
+              } else dispatch({ type: userActions.LOGIN_USER_SAGA });
             }}
             src={user?.photoURL}
           />

@@ -8,6 +8,7 @@ import {
 import { db } from "../../firebase-setting";
 import { formatTimestamp } from "../../utils/time";
 
+// Отправка сообщения
 export const sendNewMessage = async (message) => {
   try {
     const newMessage = {
@@ -25,12 +26,47 @@ export const sendNewMessage = async (message) => {
       newMessage
     );
     const currentChatRef = doc(db, `chats`, message.chatId);
+    console.log(newMessage);
 
     await updateDoc(currentChatRef, {
       lastMessage: newMessage.text,
       lastMessageOwner: newMessage.owner,
       lastMessageTime: newMessage.createDate,
     });
+    return {
+      ...newMessage,
+      createDate: newMessage.createDate.toMillis(),
+      id: newServerMessage.id,
+    };
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+};
+
+// Создание чата
+export const createNewChat = async ({ newChatUser, currentUser }) => {
+  try {
+    const newChatPayload = {
+      members: [newChatUser.id, currentUser.id],
+      messages: [],
+      createDate: Timestamp.now(),
+      lastMessage: {
+        createDate: Timestamp.now(),
+        text: "Создан новый чат",
+        files: [],
+        senderId: "system",
+      },
+    };
+    const newChat = await addDoc(collection(db, `chats`), newChatPayload);
+    // const currentChatRef = doc(db, `chats`, message.chatId);
+    // console.log(newMessage);
+
+    // await updateDoc(currentChatRef, {
+    //   lastMessage: newMessage.text,
+    //   lastMessageOwner: newMessage.owner,
+    //   lastMessageTime: newMessage.createDate,
+    // });
     return {
       ...newMessage,
       createDate: newMessage.createDate.toMillis(),

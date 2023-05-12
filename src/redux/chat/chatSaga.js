@@ -14,7 +14,7 @@ import {
   setCurrentChat,
   setCurrentChatMessages,
 } from "../slices/chatSlice";
-import { sendNewMessage } from "./chatAPI";
+import { createNewChat, sendNewMessage } from "./chatAPI";
 import { getUserDataFormDB } from "../user/userAPI";
 
 //Слушатель чатов
@@ -90,14 +90,14 @@ export function* messageListenerSaga({ payload }) {
   }
 }
 
-// Сага отправки сообщения
+// Saga отправки сообщения
 export function* sendMessageSaga(action) {
   const state = yield select();
   const message = { ...action.payload, owner: state.user.currentUser.id };
   let result = yield call(() => sendNewMessage(message));
 }
 
-// Сага получения текущего чата
+// Saga получения текущего чата
 export function* getCurrentChat(action) {
   const state = yield select();
   const chatQuery = query(doc(db, "chats", action.payload));
@@ -109,5 +109,15 @@ export function* getCurrentChat(action) {
       createDate: currentChat.createDate.toMillis(),
       lastMessageTime: currentChat.lastMessageTime.toMillis(),
     })
+  );
+}
+
+// Saga создания чата
+export function* createChatSaga(action) {
+  const state = yield select();
+  const newChatUser = { ...action.payload };
+
+  let result = yield call(() =>
+    createNewChat({ newChatUser, currentUser: state.user.currentUser })
   );
 }

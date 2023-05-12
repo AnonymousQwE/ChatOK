@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { useDispatch } from "react-redux";
 import { getUserDataFormDB } from "../../redux/user/userAPI";
+import { chatActions } from "../../redux/chat/chatAction";
 
 export default function SearchItem({ res }) {
   const theme = useTheme();
@@ -27,7 +28,7 @@ export default function SearchItem({ res }) {
         transition: ".5s",
       }}
       onClick={() => {
-        dispatch(getUserDataFormDB(res));
+        dispatch({ type: chatActions.CREATE_NEW_CHAT_SAGA, payload: res });
       }}
     >
       <ListItem sx={{ justifyContent: "center" }} alignItems="center">

@@ -13,7 +13,6 @@ import { onDisconnect, onValue, ref, set } from "firebase/database";
 import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
 
 //Получение текущего статуса авторизации пользователя
-
 export const checkUser = async () => {
   let currentUser;
 

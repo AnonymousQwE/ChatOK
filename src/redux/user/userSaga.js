@@ -11,6 +11,7 @@ import {
 import { setUser } from "../slices/userSlice";
 import { setLoadingStatus } from "../slices/systemSlice";
 
+//Saga проверки пользователя
 export function* checkUserSaga() {
   yield put(setLoadingStatus(true));
   try {
@@ -32,6 +33,7 @@ export function* checkUserSaga() {
   yield put(setLoadingStatus(false));
 }
 
+//Saga авторизация пользователя через Google
 export function* googleLoginUserSaga() {
   try {
     const currentUser = yield call(() => googleLoginUser());
@@ -52,6 +54,7 @@ export function* googleLoginUserSaga() {
   }
 }
 
+//Saga регистрации пользователя через почту
 export function* registerUserEmailSaga({ payload }) {
   try {
     let user = yield call(() => registerUserEmail(payload));
@@ -70,6 +73,7 @@ export function* registerUserEmailSaga({ payload }) {
   }
 }
 
+//Saga авторизации пользователя через почту
 export function* loginUserEmailSaga({ payload }) {
   yield put(setLoadingStatus(true));
   try {
@@ -90,6 +94,7 @@ export function* loginUserEmailSaga({ payload }) {
   yield put(setLoadingStatus(false));
 }
 
+//Saga выхода пользователя
 export function* logoutUserSaga() {
   try {
     let result = yield call(() => logoutUser());
