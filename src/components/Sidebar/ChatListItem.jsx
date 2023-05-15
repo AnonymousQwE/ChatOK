@@ -19,7 +19,6 @@ import { getUserDataFormDB } from "../../redux/user/userAPI";
 
 function ChatListItem({ chat }, ref) {
   const { currentUser: user } = useSelector((state) => state.user);
-  const [currentChatUser, setCurrentChatUser] = useState({});
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -33,13 +32,7 @@ function ChatListItem({ chat }, ref) {
   };
 
   const theme = useTheme();
-  useEffect(() => {
-    getUserDataFormDB(
-      chat.members.filter((e) => {
-        return e != user.id;
-      })[0]
-    ).then((res) => setCurrentChatUser(res));
-  }, []);
+
   const dataAtr = { "data-id": chat.id };
   return (
     <Box ref={ref}>
@@ -88,8 +81,8 @@ function ChatListItem({ chat }, ref) {
               >
                 <Avatar
                   sx={{ width: 60, height: 60, marginRight: 1 }}
-                  src={currentChatUser?.avatar}
-                  alt={currentChatUser?.displayName}
+                  src={chat.currentChatUser?.avatar}
+                  alt={chat.currentChatUser?.displayName}
                 ></Avatar>
               </Badge>
             </ListItemAvatar>
@@ -97,10 +90,10 @@ function ChatListItem({ chat }, ref) {
               component={"div"}
               primary={
                 chat.type === "dialog" ? (
-                  <Typography>{currentChatUser?.displayName}</Typography>
+                  <Typography>{chat.currentChatUser?.displayName}</Typography>
                 ) : (
                   <Typography variant={"body1"}>
-                    {currentChatUser?.displayName}
+                    {chat.currentChatUser?.displayName}
                   </Typography>
                 )
               }
@@ -127,9 +120,9 @@ function ChatListItem({ chat }, ref) {
                     ) : (
                       ""
                     )}
-                    {chat.lastMessage.length > 20
-                      ? chat?.lastMessage?.substring(0, 15) + "..."
-                      : chat.lastMessage}
+                    {chat.lastMessage.text.length > 20
+                      ? chat?.lastMessage?.text?.substring(0, 15) + "..."
+                      : chat.lastMessage?.text}
                   </Typography>
                   <Typography
                     component="span"
@@ -144,7 +137,10 @@ function ChatListItem({ chat }, ref) {
                       borderRadius: 1,
                     }}
                   >
-                    {formatTimestamp(chat.lastMessageTime).substring(12, 20)}
+                    {formatTimestamp(chat.lastMessage.createDate).substring(
+                      12,
+                      20
+                    )}
                   </Typography>
                 </Box>
               }

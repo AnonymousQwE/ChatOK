@@ -14,7 +14,7 @@ import {
   setCurrentChat,
   setCurrentChatMessages,
 } from "../slices/chatSlice";
-import { createNewChat, sendNewMessage } from "./chatAPI";
+import { addUsers, createNewChat, sendNewMessage } from "./chatAPI";
 import { getUserDataFormDB } from "../user/userAPI";
 
 //Слушатель чатов
@@ -31,28 +31,14 @@ export function* chatsListenerSaga() {
       const allChats = [];
       querySnapshot.forEach((doc) => {
         const currentChat = doc.data();
-
+        currentChat.lastMessage.createDate =
+          currentChat.lastMessage.createDate.toMillis();
         allChats.push({
           id: doc.id,
           ...currentChat,
-          createDate: currentChat.createDate.toMillis(),
-          lastMessageTime: currentChat.lastMessageTime.toMillis(),
+          chatCreateDate: currentChat.chatCreateDate.toMillis(),
         });
       });
-
-      allChats.map(async (chat) => {
-        const currentChatUser = chat.members.filter((e) => {
-          return e != state.user.currentUser.id;
-        })[0];
-        const userRef = doc(db, "users", currentChatUser);
-        const userSnap = await getDoc(userRef);
-        let currentUserData;
-        if (userSnap.exists()) {
-          currentUserData = userSnap.data();
-          return { ...chat, currentChatUser };
-        }
-      });
-
       emit(allChats);
     });
     return unsubscribe;
@@ -60,7 +46,12 @@ export function* chatsListenerSaga() {
 
   while (true) {
     const allChats = yield take(channel);
-    yield put(setChats(allChats));
+    const allChatsUsers = yield call(() => addUsers({ allChats, state }));
+    yield call(() => allChatsUsers.map((e) => e.finaly((res) => res)));
+
+    // allChatsUsers.then((res) => console.log(res));
+    console.log(allChatsUsers);
+    // yield put(setChats(allChatsUsers));
   }
 }
 
@@ -103,13 +94,11 @@ export function* getCurrentChat(action) {
   const chatQuery = query(doc(db, "chats", action.payload));
   const chatData = yield call(() => getDoc(chatQuery));
   const currentChat = chatData.data();
-  yield put(
-    setCurrentChat({
-      ...currentChat,
-      createDate: currentChat.createDate.toMillis(),
-      lastMessageTime: currentChat.lastMessageTime.toMillis(),
-    })
-  );
+
+  currentChat.lastMessage.createDate =
+    currentChat.lastMessage.createDate.toMillis();
+  currentChat.chatCreateDate = currentChat.chatCreateDate.toMillis();
+  yield put(setCurrentChat(currentChat));
 }
 
 // Saga создания чата

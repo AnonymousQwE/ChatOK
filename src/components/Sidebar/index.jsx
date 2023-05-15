@@ -33,7 +33,9 @@ function Sidebar({ setContextMenu }) {
         {chats &&
           [...chats]
             .sort((chat1, chat2) =>
-              chat1.lastMessageTime - chat2.lastMessageTime > 0 ? -1 : 1
+              chat1.lastMessage.createDate - chat2.lastMessage.createDate > 0
+                ? -1
+                : 1
             )
             ?.map((chat) => (
               <ChatListItem

@@ -3,6 +3,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase-setting";
@@ -47,16 +48,17 @@ export const sendNewMessage = async (message) => {
 // Создание чата
 export const createNewChat = async ({ newChatUser, currentUser }) => {
   try {
+    const systemMessage = {
+      createDate: Timestamp.now(),
+      text: "Создан новый чат",
+      files: [],
+      senderId: "system",
+    };
     const newChatPayload = {
       members: [newChatUser.id, currentUser.id],
-      messages: [],
-      createDate: Timestamp.now(),
-      lastMessage: {
-        createDate: Timestamp.now(),
-        text: "Создан новый чат",
-        files: [],
-        senderId: "system",
-      },
+      messages: [systemMessage],
+      chatCreateDate: Timestamp.now(),
+      lastMessage: systemMessage,
     };
     const newChat = await addDoc(collection(db, `chats`), newChatPayload);
     // const currentChatRef = doc(db, `chats`, message.chatId);
@@ -67,29 +69,38 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
     //   lastMessageOwner: newMessage.owner,
     //   lastMessageTime: newMessage.createDate,
     // });
-    return {
-      ...newMessage,
-      createDate: newMessage.createDate.toMillis(),
-      id: newServerMessage.id,
-    };
+    // return {
+    //   ...newMessage,
+    //   createDate: newMessage.createDate.toMillis(),
+    //   id: newServerMessage.id,
+    // };
   } catch (e) {
     console.log(e);
     return e;
   }
 };
 
-// export const getUserDataFr = async (userId) => {
-//   try {
-//     const docRef = doc(db, "users", userId);
-//     const docSnap = await getDoc(docRef);
-
-//     if (docSnap.exists()) {
-//       return { ...docSnap.data(), id: docSnap.id };
-//     } else {
-//       // doc.data() will be undefined in this case
-//       console.log("No such document!");
-//     }
-//   } catch (e) {
-//     console.log(e);
+export const addUsers = async ({ allChats, state }) => {
+  allChats.map(async (chat, i) => {
+    const currentChatUser = chat.members.filter((e) => {
+      return e != state.user.currentUser.id;
+    })[0];
+    const userRef = doc(db, "users", currentChatUser);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      // console.log(allChats)
+      return { ...allChats[i], currentChatUser: userSnap.data() };
+    }
+  });
+};
+// allChats.map(async (chat, i) => {
+//   const currentChatUser = chat.members.filter((e) => {
+//     return e != state.user.currentUser.id;
+//   })[0];
+//   const userRef = doc(db, "users", currentChatUser);
+//   const userSnap = await getDoc(userRef);
+//   if (userSnap.exists()) {
+//     return await { ...allChats[i], currentChatUser: userSnap.data() };
 //   }
-// };
+// });
+// console.log(allChats);
