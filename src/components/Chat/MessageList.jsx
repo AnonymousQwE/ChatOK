@@ -23,9 +23,9 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
   return (
     <Box
       ref={(chatRef, ref)}
-      onScroll={(e) => {
-        console.log(window);
-      }}
+      // onScroll={(e) => {
+      //   console.log(window);
+      // }}
       sx={{
         margin: 1,
         overflowY: "auto",
@@ -47,7 +47,7 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
         }}
       >
         {currentChat?.messages &&
-          currentChat.chatUser !== null &&
+          currentChat.currentChatUser !== null &&
           [...currentChat?.messages]
             .sort((message1, message2) =>
               message1.createDate - message2.createDate > 0 ? 1 : -1

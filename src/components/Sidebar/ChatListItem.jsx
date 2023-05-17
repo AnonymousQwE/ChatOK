@@ -81,7 +81,7 @@ function ChatListItem({ chat }, ref) {
               >
                 <Avatar
                   sx={{ width: 60, height: 60, marginRight: 1 }}
-                  src={chat.currentChatUser?.avatar}
+                  src={chat.currentChatUser?.photoURL}
                   alt={chat.currentChatUser?.displayName}
                 ></Avatar>
               </Badge>
@@ -90,10 +90,10 @@ function ChatListItem({ chat }, ref) {
               component={"div"}
               primary={
                 chat.type === "dialog" ? (
-                  <Typography>{chat.currentChatUser?.displayName}</Typography>
+                  <Typography>{chat.currentChatUser.displayName}</Typography>
                 ) : (
                   <Typography variant={"body1"}>
-                    {chat.currentChatUser?.displayName}
+                    {chat.currentChatUser.displayName}
                   </Typography>
                 )
               }

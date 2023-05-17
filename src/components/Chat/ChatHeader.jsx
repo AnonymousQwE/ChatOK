@@ -15,10 +15,10 @@ export default function ChatHeader({ currentChat }) {
         width: "100%",
       }}
     >
-      <Avatar src={currentChat.chatUser?.photoURL} />
+      <Avatar src={currentChat.currentChatUser?.photoURL} />
       <Box>
         <Typography variant="body1">
-          {currentChat.chatUser?.displayName}
+          {currentChat.currentChatUser?.displayName}
         </Typography>
         <Typography sx={{ fontSize: 10 }} variant="subtitle2">
           был онлайн {new Date().toLocaleTimeString()}

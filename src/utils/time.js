@@ -1,7 +1,12 @@
 export function formatTimestamp(timestamp) {
   // generateTextToTime(timestamp);
   // return timestamp && timestamp.toMillis();
-  return new Date(timestamp).toLocaleString();
+
+  if (new Date(timestamp).toLocaleString() === "Invalid Date") {
+    console.log(timestamp, new Date(timestamp).toLocaleString());
+  } else {
+    return new Date(timestamp).toLocaleString();
+  }
 }
 
 export const generateTextToTime = (timestamp) => {

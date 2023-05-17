@@ -21,7 +21,6 @@ function Sidebar({ setContextMenu }) {
   return (
     <Box
       sx={{
-        borderRight: "1px solid black",
         width: "100%",
         maxWidth: 360,
         backgroundColor: "#fff",
@@ -39,8 +38,8 @@ function Sidebar({ setContextMenu }) {
             )
             ?.map((chat) => (
               <ChatListItem
-                initial={{ x: -300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
+                initial={{ y: -500, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.7 }}
                 setContextMenu={setContextMenu}
                 key={chat.id}

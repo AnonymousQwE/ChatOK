@@ -202,7 +202,6 @@ export const getUserDataFormDB = async (currentUser) => {
     const newUser = {
       ...currentUser,
       role: "user",
-      image: "",
       createDate: Timestamp.now(),
     };
     console.log(newUser);

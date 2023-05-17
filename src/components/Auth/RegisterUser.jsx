@@ -53,14 +53,14 @@ const RegisterUser = ({ setReg }) => {
       >
         <Typography variant="h3">Регистрация</Typography>
         <FormControl
-          error={errors.dislayName && true}
+          error={errors.displayName && true}
           margin="dense"
           fullWidth
           variant="standard"
         >
           <InputLabel htmlFor="DisplayName">Ваше Имя</InputLabel>
           <Input
-            {...register("dislayName", {
+            {...register("displayName", {
               required: "Это поле обязательно для заполнения",
               minLength: {
                 value: 4,
@@ -74,7 +74,7 @@ const RegisterUser = ({ setReg }) => {
               </InputAdornment>
             }
           />
-          <FormHelperText>{errors?.dislayName?.message}</FormHelperText>
+          <FormHelperText>{errors?.displayName?.message}</FormHelperText>
         </FormControl>
         <FormControl
           error={errors.userName && true}

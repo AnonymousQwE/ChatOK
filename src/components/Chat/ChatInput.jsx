@@ -2,11 +2,12 @@ import { Send } from "@mui/icons-material";
 import { Box, IconButton, TextField } from "@mui/material";
 import { addDoc, collection, setDoc, Timestamp } from "firebase/firestore";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { chatActions } from "../../redux/chat/chatAction";
 
 export default function ChatInput({ id }) {
   const [messageText, setMessageText] = useState("");
+  const { currentUser } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const handleSendMessage = (e) => {
@@ -14,7 +15,11 @@ export default function ChatInput({ id }) {
     if (messageText.trim() !== "") {
       dispatch({
         type: chatActions.SEND_MESSAGE_SAGA,
-        payload: { chatId: id, text: messageText.trim() },
+        payload: {
+          chatId: id,
+          text: messageText.trim(),
+          senderId: currentUser.id,
+        },
       });
       setMessageText("");
     }

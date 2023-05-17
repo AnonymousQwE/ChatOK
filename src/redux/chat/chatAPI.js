@@ -1,6 +1,7 @@
 import {
   Timestamp,
   addDoc,
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -13,7 +14,8 @@ import { formatTimestamp } from "../../utils/time";
 export const sendNewMessage = async (message) => {
   try {
     const newMessage = {
-      ...message,
+      text: message.text,
+      senderId: message.owner,
       createDate: Timestamp.now(),
       file: null,
       status: {
@@ -22,22 +24,22 @@ export const sendNewMessage = async (message) => {
         error: false,
       },
     };
-    const newServerMessage = await addDoc(
-      collection(db, `chats/${message.chatId}/messages`),
-      newMessage
+    const newServerMessage = await updateDoc(
+      doc(db, `chats/${message.chatId}`),
+      { messages: arrayUnion(newMessage) }
     );
     const currentChatRef = doc(db, `chats`, message.chatId);
-    console.log(newMessage);
 
     await updateDoc(currentChatRef, {
-      lastMessage: newMessage.text,
-      lastMessageOwner: newMessage.owner,
-      lastMessageTime: newMessage.createDate,
+      lastMessage: {
+        text: message.text,
+        senderId: message.owner,
+        createDate: newMessage.createDate,
+      },
     });
     return {
       ...newMessage,
       createDate: newMessage.createDate.toMillis(),
-      id: newServerMessage.id,
     };
   } catch (e) {
     console.log(e);
@@ -80,27 +82,16 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
   }
 };
 
+//Получение пользователя
 export const addUsers = async ({ allChats, state }) => {
-  allChats.map(async (chat, i) => {
+  const newAllChats = allChats.map(async (chat) => {
     const currentChatUser = chat.members.filter((e) => {
       return e != state.user.currentUser.id;
     })[0];
     const userRef = doc(db, "users", currentChatUser);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
-      // console.log(allChats)
-      return { ...allChats[i], currentChatUser: userSnap.data() };
+      return { ...chat, currentChatUser: userSnap.data() };
     }
   });
 };
-// allChats.map(async (chat, i) => {
-//   const currentChatUser = chat.members.filter((e) => {
-//     return e != state.user.currentUser.id;
-//   })[0];
-//   const userRef = doc(db, "users", currentChatUser);
-//   const userSnap = await getDoc(userRef);
-//   if (userSnap.exists()) {
-//     return await { ...allChats[i], currentChatUser: userSnap.data() };
-//   }
-// });
-// console.log(allChats);

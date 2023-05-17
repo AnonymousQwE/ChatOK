@@ -16,9 +16,9 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
   const { currentUser: user } = useSelector((state) => state.user);
 
   const owner =
-    message.owner === user?.id
+    message.senderId === user?.id
       ? true
-      : message.owner === "system"
+      : message.senderId === "system"
       ? "system"
       : false;
   const setMessStyle = () => {
@@ -115,7 +115,7 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
         }}
       >
         <ListItemAvatar
-          ref={message.status.read ? messRef : messRef}
+          ref={message.status?.read ? messRef : messRef}
           sx={{
             display: owner === "system" ? "none" : "flex",
           }}
