@@ -23,7 +23,6 @@ function Chat() {
     }
   }, [id]);
 
-  console.log(currentChat);
   useEffect(() => {
     if (messRef.current) {
       messRef.current?.scrollIntoView({
@@ -52,6 +51,7 @@ function Chat() {
           user={user}
           currentChat={currentChat}
           chatRef={chatRef}
+          chatId={id}
         />
         <Box>
           <ChatInput id={id} />

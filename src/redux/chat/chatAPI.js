@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   getDoc,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase-setting";
@@ -24,9 +25,9 @@ export const sendNewMessage = async (message) => {
         error: false,
       },
     };
-    const newServerMessage = await updateDoc(
-      doc(db, `chats/${message.chatId}`),
-      { messages: arrayUnion(newMessage) }
+    const newServerMessage = await addDoc(
+      collection(db, `chats/${message.chatId}/messages`),
+      newMessage
     );
     const currentChatRef = doc(db, `chats`, message.chatId);
 
@@ -58,11 +59,14 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
     };
     const newChatPayload = {
       members: [newChatUser.id, currentUser.id],
-      messages: [systemMessage],
       chatCreateDate: Timestamp.now(),
       lastMessage: systemMessage,
     };
     const newChat = await addDoc(collection(db, `chats`), newChatPayload);
+    const messages = await addDoc(
+      collection(db, `chats/${newChat.id}/messages`),
+      systemMessage
+    );
     // const currentChatRef = doc(db, `chats`, message.chatId);
     // console.log(newMessage);
 
@@ -80,18 +84,4 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
     console.log(e);
     return e;
   }
-};
-
-//Получение пользователя
-export const addUsers = async ({ allChats, state }) => {
-  const newAllChats = allChats.map(async (chat) => {
-    const currentChatUser = chat.members.filter((e) => {
-      return e != state.user.currentUser.id;
-    })[0];
-    const userRef = doc(db, "users", currentChatUser);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-      return { ...chat, currentChatUser: userSnap.data() };
-    }
-  });
 };

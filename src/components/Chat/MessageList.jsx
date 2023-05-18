@@ -3,7 +3,7 @@ import ChatMessage from "./ChatMessage";
 import { Box, List, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
-function MessageList({ currentChat, chatRef, user, messRef }, ref) {
+function MessageList({ currentChat, chatRef, user, messRef, chatId }, ref) {
   const newMessage = {
     visible: (i) => ({
       opacity: 1,
@@ -65,6 +65,7 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
                   message={message}
                   key={message.createDate}
                   custom={i}
+                  chatId={chatId}
                 />
               );
             })}

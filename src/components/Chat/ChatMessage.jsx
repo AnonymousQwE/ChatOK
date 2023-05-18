@@ -10,10 +10,30 @@ import React, { forwardRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { formatTimestamp } from "../../utils/time";
 import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase-setting";
 
-function ChatMessage({ messRef, message, owner: chatUser }, ref) {
+function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
   const { currentUser: user } = useSelector((state) => state.user);
+  const { ref: reference, inView } = useInView({
+    threshold: 1,
+  });
+
+  useEffect(() => {
+    if (inView && message.senderId !== user.id) {
+      console.log(message);
+      const messagesRef = doc(db, `chats/${chatId}/messages`, message.id);
+
+      updateDoc(messagesRef, {
+        status: {
+          ...message.status,
+          read: true,
+        },
+      });
+    }
+  }, [inView]);
 
   const owner =
     message.senderId === user?.id
@@ -115,7 +135,7 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
         }}
       >
         <ListItemAvatar
-          ref={message.status?.read ? messRef : messRef}
+          ref={message.status?.read ? messRef : reference}
           sx={{
             display: owner === "system" ? "none" : "flex",
           }}
@@ -168,6 +188,7 @@ function ChatMessage({ messRef, message, owner: chatUser }, ref) {
             <Typography variant="body2" sx={setMessStyle()}>
               {message.text}
             </Typography>
+            {message.status?.read ? "read" : ""}
           </Box>
         </Box>
       </ListItem>

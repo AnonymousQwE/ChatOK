@@ -1,18 +1,19 @@
+import { Timestamp } from "firebase/firestore";
+
 export function formatTimestamp(timestamp) {
   // generateTextToTime(timestamp);
-  // return timestamp && timestamp.toMillis();
 
-  if (new Date(timestamp).toLocaleString() === "Invalid Date") {
-    console.log(timestamp, new Date(timestamp).toLocaleString());
-  } else {
+  if (new Date(timestamp).toLocaleString() !== "Invalid Date") {
     return new Date(timestamp).toLocaleString();
+  } else {
+    console.log("Неправильные дата и время");
   }
 }
 
 export const generateTextToTime = (timestamp) => {
   const timeDiff = Math.round(
     Math.abs(
-      timestamp.toDate().getTime() -
+      timestamp -
         Timestamp.fromDate(new Date()).toDate().getTime()
     ) /
       1000 /

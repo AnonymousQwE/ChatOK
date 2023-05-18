@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   where,
@@ -28,9 +29,9 @@ export function* chatsListenerSaga() {
         const currentChat = chat.data();
         currentChat.lastMessage.createDate =
           currentChat.lastMessage.createDate.toMillis();
-        currentChat.messages = currentChat.messages.map((message) => {
-          return { ...message, createDate: message.createDate.toMillis() };
-        });
+        // currentChat.messages = currentChat.messages.map((message) => {
+        //   return { ...message, createDate: message.createDate.toMillis() };
+        // });
 
         allChats.push({
           ...currentChat,
@@ -45,8 +46,13 @@ export function* chatsListenerSaga() {
 
   while (true) {
     const allChats = yield take(channel);
-    const newChats = yield all(
+    const allMessages = yield all(
       allChats.map((chat) => {
+        return call(getMessages, { chat });
+      })
+    );
+    const newChats = yield all(
+      allMessages.map((chat) => {
         return call(getUserDB, { chat, state });
       })
     );
@@ -87,6 +93,7 @@ export function* sendMessageSaga(action) {
 }
 
 // // Saga получения текущего чата
+
 // export function* getCurrentChat(action) {
 //   const state = yield select();
 //   const chatQuery = query(doc(db, "chats", action.payload));
@@ -109,6 +116,7 @@ export function* createChatSaga(action) {
   );
 }
 
+//Получение данных пользователей
 export function* getUserDB({ chat, state }) {
   const currentChatUser = chat.members.filter((e) => {
     return e != state.user.currentUser.id;
@@ -118,4 +126,20 @@ export function* getUserDB({ chat, state }) {
   if (userSnap.exists()) {
     return { ...chat, currentChatUser: userSnap.data() };
   }
+}
+
+//Получение сообщений
+export function* getMessages({ chat }) {
+  const messages = [];
+  const messagesQuery = query(collection(db, `chats/${chat.id}/messages`));
+  const messagesSnap = yield getDocs(messagesQuery);
+
+  messagesSnap.forEach((doc) =>
+    messages.push({
+      ...doc.data(),
+      createDate: doc.data().createDate.toMillis(),
+      id: doc.id,
+    })
+  );
+  return { ...chat, messages };
 }
