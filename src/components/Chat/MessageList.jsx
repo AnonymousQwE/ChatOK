@@ -63,7 +63,7 @@ function MessageList({ currentChat, chatRef, user, messRef }, ref) {
                   }
                   messRef={messRef}
                   message={message}
-                  key={message.id}
+                  key={message.createDate}
                   custom={i}
                 />
               );
