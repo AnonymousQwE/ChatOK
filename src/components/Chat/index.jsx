@@ -10,7 +10,7 @@ import MessageList from "./MessageList";
 function Chat() {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
-  const { chats } = useSelector((state) => state.chat);
+  const { chats, chatMessages } = useSelector((state) => state.chat);
 
   const messRef = useRef(null);
   const chatRef = useRef(null);
@@ -19,7 +19,6 @@ function Chat() {
   useEffect(() => {
     if (id) {
       dispatch({ type: chatActions.GET_MESSAGES_SAGA, payload: id });
-      dispatch({ type: chatActions.GET_CURRENT_CHAT_SAGA, payload: id });
     }
   }, [id]);
 
@@ -29,10 +28,10 @@ function Chat() {
         block: "end",
       });
     }
-  }, [currentChat?.messages, chatRef.current]);
+  }, [chatMessages, chatRef.current]);
 
   return (
-    currentChat?.messages && (
+    chatMessages && (
       <Box
         sx={{
           boxSizing: "border-box",
@@ -47,6 +46,7 @@ function Chat() {
       >
         <ChatHeader currentChat={currentChat} />
         <MessageList
+          chatMessages={chatMessages}
           messRef={messRef}
           user={user}
           currentChat={currentChat}

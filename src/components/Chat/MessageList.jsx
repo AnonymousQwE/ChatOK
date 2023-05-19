@@ -1,9 +1,16 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect } from "react";
 import ChatMessage from "./ChatMessage";
 import { Box, List, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { chatActions } from "../../redux/chat/chatAction";
 
-function MessageList({ currentChat, chatRef, user, messRef, chatId }, ref) {
+function MessageList(
+  { currentChat, chatRef, user, messRef, chatId, chatMessages },
+  ref
+) {
+  console.log(chatMessages);
+
   const newMessage = {
     visible: (i) => ({
       opacity: 1,
@@ -46,9 +53,9 @@ function MessageList({ currentChat, chatRef, user, messRef, chatId }, ref) {
           maxWidth: "100%",
         }}
       >
-        {currentChat?.messages &&
-          currentChat.currentChatUser !== null &&
-          [...currentChat?.messages]
+        {chatMessages &&
+          currentChat?.currentChatUser !== null &&
+          [...chatMessages]
             .sort((message1, message2) =>
               message1.createDate - message2.createDate > 0 ? 1 : -1
             )
@@ -59,7 +66,7 @@ function MessageList({ currentChat, chatRef, user, messRef, chatId }, ref) {
                   initial={"hidden"}
                   animate={"visible"}
                   owner={
-                    message.owner === user.id ? user : currentChat.chatUser
+                    message?.owner === user.id ? user : currentChat?.chatUser
                   }
                   messRef={messRef}
                   message={message}

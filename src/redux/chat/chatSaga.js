@@ -10,14 +10,14 @@ import {
 import { db } from "../../firebase-setting";
 import { all, call, put, select, take } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { setChats } from "../slices/chatSlice";
+import { setChatMessages, setChats } from "../slices/chatSlice";
 import { createNewChat, sendNewMessage } from "./chatAPI";
 
 //Слушатель чатов
 export function* chatsListenerSaga() {
   const state = yield select();
 
-  const channel = new eventChannel((emit) => {
+  const chatsChannel = new eventChannel((emit) => {
     const q = query(
       collection(db, "chats"),
       where("members", "array-contains", state.user.currentUser.id)
@@ -45,14 +45,9 @@ export function* chatsListenerSaga() {
   });
 
   while (true) {
-    const allChats = yield take(channel);
-    const allMessages = yield all(
-      allChats.map((chat) => {
-        return call(getMessages, { chat });
-      })
-    );
+    const allChats = yield take(chatsChannel);
     const newChats = yield all(
-      allMessages.map((chat) => {
+      allChats.map((chat) => {
         return call(getUserDB, { chat, state });
       })
     );
@@ -60,30 +55,38 @@ export function* chatsListenerSaga() {
   }
 }
 
-//Слушатель сообщений текущего чата
-// export function* messageListenerSaga({ payload }) {
-//   const channel = new eventChannel((emit) => {
-//     let allMessages = [];
-//     const messagesQuery = doc(db, "chats", payload);
-//     const unsubscribe = onSnapshot(messagesQuery, (doc) => {
-//       const currentMessages = [...allMessages];
-//       doc.data().messages.forEach((doc) => {
-//         const currentMessage = {
-//           ...doc,
-//           createDate: doc.createDate.toMillis(),
-//         };
-//         currentMessages.push(currentMessage);
-//       });
-//       emit(currentMessages);
-//     });
-//     return unsubscribe;
-//   });
+// Слушатель сообщений текущего чата
+export function* messageListenerSaga({ payload }) {
+  const channel = new eventChannel((emit) => {
+    let allMessages = [];
+    const messagesQuery = collection(db, "chats", payload, "messages");
+    const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
+      querySnapshot.forEach((message) => {
+        const newMessage = message.data();
+        allMessages.push({
+          ...newMessage,
+          id: message.id,
+          createDate: newMessage.createDate.toMillis(),
+        });
+      });
 
-//   while (true) {
-//     const allMessages = yield take(channel);
-//     // yield put(setCurrentChatMessages(allMessages));
-//   }
-// }
+      // doc.data().messages.forEach((doc) => {
+      //   const currentMessage = {
+      //     ...doc,
+      //     createDate: doc.createDate.toMillis(),
+      //   };
+      //   currentMessages.push(currentMessage);
+      // });
+      emit(allMessages);
+    });
+    return unsubscribe;
+  });
+
+  while (true) {
+    const allMessages = yield take(channel);
+    yield put(setChatMessages(allMessages));
+  }
+}
 
 // Saga отправки сообщения
 export function* sendMessageSaga(action) {
@@ -126,20 +129,4 @@ export function* getUserDB({ chat, state }) {
   if (userSnap.exists()) {
     return { ...chat, currentChatUser: userSnap.data() };
   }
-}
-
-//Получение сообщений
-export function* getMessages({ chat }) {
-  const messages = [];
-  const messagesQuery = query(collection(db, `chats/${chat.id}/messages`));
-  const messagesSnap = yield getDocs(messagesQuery);
-
-  messagesSnap.forEach((doc) =>
-    messages.push({
-      ...doc.data(),
-      createDate: doc.data().createDate.toMillis(),
-      id: doc.id,
-    })
-  );
-  return { ...chat, messages };
 }
