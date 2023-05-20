@@ -29,9 +29,6 @@ export function* chatsListenerSaga() {
         const currentChat = chat.data();
         currentChat.lastMessage.createDate =
           currentChat.lastMessage.createDate.toMillis();
-        // currentChat.messages = currentChat.messages.map((message) => {
-        //   return { ...message, createDate: message.createDate.toMillis() };
-        // });
 
         allChats.push({
           ...currentChat,
@@ -58,33 +55,26 @@ export function* chatsListenerSaga() {
 // Слушатель сообщений текущего чата
 export function* messageListenerSaga({ payload }) {
   const channel = new eventChannel((emit) => {
-    let allMessages = [];
     const messagesQuery = collection(db, "chats", payload, "messages");
     const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
+      let allMessages = [];
       querySnapshot.forEach((message) => {
-        const newMessage = message.data();
-        allMessages.push({
-          ...newMessage,
+        let newMessage = {
+          ...message.data(),
+          createDate: message.data().createDate.toMillis(),
           id: message.id,
-          createDate: newMessage.createDate.toMillis(),
-        });
+        };
+        allMessages.push(newMessage);
       });
 
-      // doc.data().messages.forEach((doc) => {
-      //   const currentMessage = {
-      //     ...doc,
-      //     createDate: doc.createDate.toMillis(),
-      //   };
-      //   currentMessages.push(currentMessage);
-      // });
       emit(allMessages);
     });
     return unsubscribe;
   });
 
   while (true) {
-    const allMessages = yield take(channel);
-    yield put(setChatMessages(allMessages));
+    const currentMessages = yield take(channel);
+    yield put(setChatMessages(currentMessages));
   }
 }
 

@@ -9,8 +9,6 @@ function MessageList(
   { currentChat, chatRef, user, messRef, chatId, chatMessages },
   ref
 ) {
-  console.log(chatMessages);
-
   const newMessage = {
     visible: (i) => ({
       opacity: 1,

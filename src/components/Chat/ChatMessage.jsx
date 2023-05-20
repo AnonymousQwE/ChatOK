@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-setting";
+import { Done, DoneAll } from "@mui/icons-material";
 
 function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
@@ -23,9 +24,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
 
   useEffect(() => {
     if (inView && message.senderId !== user.id) {
-      console.log(message);
       const messagesRef = doc(db, `chats/${chatId}/messages`, message.id);
-
       updateDoc(messagesRef, {
         status: {
           ...message.status,
@@ -41,6 +40,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
       : message.senderId === "system"
       ? "system"
       : false;
+
   const setMessStyle = () => {
     const system = {
       position: "relative",
@@ -79,6 +79,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
         borderRadius: "10px",
       },
     };
+
     const receivedMessage = {
       position: "relative",
       display: "inline-block",
@@ -111,6 +112,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
         borderRadius: "10px",
       },
     };
+
     if (owner) {
       if (owner === "system") {
         return system;
@@ -119,8 +121,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
       return receivedMessage;
     }
   };
-
-  useEffect(() => {}, []);
 
   return (
     <>
@@ -135,7 +135,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
         }}
       >
         <ListItemAvatar
-          ref={message.status?.read ? messRef : reference}
+          ref={messRef}
           sx={{
             display: owner === "system" ? "none" : "flex",
           }}
@@ -166,6 +166,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
             variant="caption"
           >
             <Typography
+              ref={reference}
               sx={{
                 display: owner === "system" && "none",
                 fontSize: 12,
@@ -187,8 +188,23 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
           >
             <Typography variant="body2" sx={setMessStyle()}>
               {message.text}
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  justifyContent: owner ? "flex-end" : "flex-start",
+                }}
+                variant="p"
+              >
+                {message.status?.read ? (
+                  <DoneAll fontSize="10" />
+                ) : message.status.send ? (
+                  <Done fontSize="10" />
+                ) : (
+                  ""
+                )}
+              </Typography>
             </Typography>
-            {message.status?.read ? "read" : ""}
           </Box>
         </Box>
       </ListItem>
