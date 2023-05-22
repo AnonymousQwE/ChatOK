@@ -18,7 +18,11 @@ import { Done, DoneAll } from "@mui/icons-material";
 function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
   const { currentUser: user } = useSelector((state) => state.user);
-  const { ref: reference, inView } = useInView({
+  const {
+    ref: reference,
+    inView,
+    entry,
+  } = useInView({
     threshold: 1,
   });
 
@@ -33,6 +37,9 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
       });
     }
   }, [inView]);
+
+  console.log(chatUser);
+  console.log(message);
 
   const owner =
     message.senderId === user?.id
@@ -198,7 +205,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
               >
                 {message.status?.read ? (
                   <DoneAll fontSize="10" />
-                ) : message.status.send ? (
+                ) : message.status?.send ? (
                   <Done fontSize="10" />
                 ) : (
                   ""

@@ -1,12 +1,12 @@
 import {
   Timestamp,
   addDoc,
-  arrayUnion,
   collection,
   doc,
-  getDoc,
-  setDoc,
+  getDocs,
+  query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { formatTimestamp } from "../../utils/time";
@@ -51,35 +51,34 @@ export const sendNewMessage = async (message) => {
 // Создание чата
 export const createNewChat = async ({ newChatUser, currentUser }) => {
   try {
-    const systemMessage = {
-      createDate: Timestamp.now(),
-      text: "Создан новый чат",
-      files: [],
-      senderId: "system",
-    };
-    const newChatPayload = {
-      members: [newChatUser.id, currentUser.id],
-      chatCreateDate: Timestamp.now(),
-      lastMessage: systemMessage,
-    };
-    const newChat = await addDoc(collection(db, `chats`), newChatPayload);
-    const messages = await addDoc(
-      collection(db, `chats/${newChat.id}/messages`),
-      systemMessage
+    const q = query(
+      collection(db, "chats"),
+      where("members", "==", [newChatUser.id, currentUser.id])
     );
-    // const currentChatRef = doc(db, `chats`, message.chatId);
-    // console.log(newMessage);
-
-    // await updateDoc(currentChatRef, {
-    //   lastMessage: newMessage.text,
-    //   lastMessageOwner: newMessage.owner,
-    //   lastMessageTime: newMessage.createDate,
-    // });
-    // return {
-    //   ...newMessage,
-    //   createDate: newMessage.createDate.toMillis(),
-    //   id: newServerMessage.id,
-    // };
+    const chatQuery = await getDocs(q);
+    console.log(chatQuery);
+    chatQuery.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+    });
+    if (chatQuery.empty) {
+      const systemMessage = {
+        createDate: Timestamp.now(),
+        text: "Создан новый чат",
+        files: [],
+        senderId: "system",
+      };
+      const newChatPayload = {
+        members: [newChatUser.id, currentUser.id],
+        chatCreateDate: Timestamp.now(),
+        lastMessage: systemMessage,
+      };
+      const newChat = await addDoc(collection(db, `chats`), newChatPayload);
+      const messages = await addDoc(
+        collection(db, `chats/${newChat.id}/messages`),
+        systemMessage
+      );
+    }
   } catch (e) {
     console.log(e);
     return e;

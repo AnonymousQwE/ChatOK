@@ -64,7 +64,9 @@ function MessageList(
                   initial={"hidden"}
                   animate={"visible"}
                   owner={
-                    message?.owner === user.id ? user : currentChat?.chatUser
+                    message?.senderId === user.id
+                      ? user
+                      : currentChat?.currentChatUser
                   }
                   messRef={messRef}
                   message={message}
