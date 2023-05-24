@@ -21,8 +21,9 @@ function Sidebar({ setContextMenu }) {
   return (
     <Box
       sx={{
+        display: { md: "block", xs: "none" },
         width: "100%",
-        maxWidth: 360,
+        // maxWidth: 360,
         backgroundColor: "#fff",
         height: "100%",
         overflowY: "auto",

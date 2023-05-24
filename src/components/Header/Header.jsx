@@ -3,7 +3,6 @@ import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import Search from "./Search";
 import UserProfile from "./UserProfile";
-import { chatActions } from "../../redux/chat/chatAction";
 import { Link } from "react-router-dom";
 
 function Header() {
@@ -17,9 +16,6 @@ function Header() {
           <Link to={"/"} style={{ color: "white", textDecoration: "none" }}>
             ChatOK
           </Link>
-        </Typography>
-        <Typography>
-          <Link to={"/auth"}>Авторизация</Link>
         </Typography>
         <Search />
 

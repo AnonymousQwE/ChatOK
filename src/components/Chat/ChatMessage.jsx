@@ -18,11 +18,7 @@ import { Done, DoneAll } from "@mui/icons-material";
 function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
   const { currentUser: user } = useSelector((state) => state.user);
-  const {
-    ref: reference,
-    inView,
-    entry,
-  } = useInView({
+  const { ref: reference, inView } = useInView({
     threshold: 1,
   });
 
@@ -37,9 +33,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
       });
     }
   }, [inView]);
-
-  console.log(chatUser);
-  console.log(message);
 
   const owner =
     message.senderId === user?.id
@@ -133,7 +126,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
     <>
       <ListItem
         ref={ref}
-        onClick={(e) => console.log(e.clientY)}
         sx={{
           display: "flex",
           alignItems: "flex-end",

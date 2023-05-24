@@ -4,7 +4,6 @@ import Chat from "../Chat/";
 import Sidebar from "../Sidebar";
 import { Route, Routes } from "react-router-dom";
 import NoChat from "../Chat/NoChat";
-import Auth from "../Auth";
 import { useSelector } from "react-redux";
 
 const MainLayout = () => {
@@ -14,10 +13,6 @@ const MainLayout = () => {
       onContextMenu={(e) => {
         e.preventDefault();
       }}
-      // onClick={(e) => {
-      //   contextMenu.active &&
-      //     dispatch(setContextMenu({ active: false, position: null }));
-      // }}
     >
       <Grid
         container
@@ -25,7 +20,7 @@ const MainLayout = () => {
           height: "calc(100vh - 64px)",
         }}
       >
-        <Grid sx={{ position: "relative" }} item xs={3}>
+        <Grid sx={{ position: "relative" }} item md={3} xs={12}>
           <Box
             sx={{
               position: "absolute",
@@ -36,7 +31,7 @@ const MainLayout = () => {
             <Sidebar />
           </Box>
         </Grid>
-        <Grid item sx={{ position: "relative", height: "100%" }} xs={9}>
+        <Grid item sx={{ position: "relative", height: "100%" }} md={9} xs={12}>
           <Routes>
             <Route element={<NoChat />} index />
             <Route element={<Chat />} path={"chat/:id"} />

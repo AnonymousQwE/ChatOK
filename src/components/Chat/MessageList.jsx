@@ -2,8 +2,6 @@ import React, { forwardRef, useEffect } from "react";
 import ChatMessage from "./ChatMessage";
 import { Box, List, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { useDispatch, useSelector } from "react-redux";
-import { chatActions } from "../../redux/chat/chatAction";
 
 function MessageList(
   { currentChat, chatRef, user, messRef, chatId, chatMessages },
@@ -28,9 +26,6 @@ function MessageList(
   return (
     <Box
       ref={(chatRef, ref)}
-      // onScroll={(e) => {
-      //   console.log(window);
-      // }}
       sx={{
         margin: 1,
         overflowY: "auto",
