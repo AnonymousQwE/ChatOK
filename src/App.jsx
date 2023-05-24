@@ -8,7 +8,7 @@ import { userActions } from "./redux/user/userActions";
 import MainLayout from "./components/Layout/MainLayout";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth";
-import Loader from "./components/Loader";
+import Loader from "./components/Loader/Loader";
 
 function App() {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });
   }, []);
-  if (status) return <Loader />;
+  if (status) return <Loader/>;
   return (
     <>
       <Header />

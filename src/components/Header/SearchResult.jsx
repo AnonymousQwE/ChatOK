@@ -15,6 +15,7 @@ export default function SearchResult({ status, active, result, searchText }) {
       sx={{
         position: "absolute",
         right: 0,
+        zIndex: 10,
         // display:
         //   (active && result.length) ||
         //   status == "loading" ||

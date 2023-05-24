@@ -58,7 +58,6 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
     const chatQuery = await getDocs(q);
     console.log(chatQuery);
     chatQuery.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       console.log(doc.id, " => ", doc.data());
     });
     if (chatQuery.empty) {
