@@ -16,9 +16,12 @@ import { setContextMenu } from "../../redux/slices/systemSlice";
 import { formatTimestamp } from "../../utils/time";
 import { motion } from "framer-motion";
 import { getUserDataFormDB } from "../../redux/user/userAPI";
+import { realTimeDb } from "../../firebase-setting";
+import { onValue, ref } from "firebase/database";
 
-function ChatListItem({ chat }, ref) {
+function ChatListItem({ chat }, reference) {
   const { currentUser: user } = useSelector((state) => state.user);
+  const [online, setOnline] = useState("");
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -31,11 +34,20 @@ function ChatListItem({ chat }, ref) {
     );
   };
 
+  useEffect(() => {
+    const onlineRef = ref(realTimeDb, "status", chat.currentChatUser.id);
+    onValue(onlineRef, (snap) => {
+      const currentUserOnline = snap.val()[chat.currentChatUser.id];
+      setOnline(currentUserOnline);
+    });
+  }, []);
+
   const theme = useTheme();
 
   const dataAtr = { "data-id": chat.id };
+  console.log(online);
   return (
-    <Box ref={ref}>
+    <Box ref={reference}>
       <NavLink
         style={{
           textDecoration: "none",
@@ -60,7 +72,6 @@ function ChatListItem({ chat }, ref) {
                 background: theme.palette.primary.light,
                 cursor: "pointer",
               },
-              // overflow: "hidden",
             }}
             key={chat.id}
           >
@@ -89,13 +100,12 @@ function ChatListItem({ chat }, ref) {
             <ListItemText
               component={"div"}
               primary={
-                chat.type === "dialog" ? (
-                  <Typography>{chat.currentChatUser.displayName}</Typography>
-                ) : (
-                  <Typography variant={"body1"}>
-                    {chat.currentChatUser.displayName}
-                  </Typography>
-                )
+                <Typography
+                  sx={{ fontSize: { xs: 15, md: 20 } }}
+                  variant={"body1"}
+                >
+                  {chat.currentChatUser.displayName}
+                </Typography>
               }
               secondary={
                 <Box
@@ -110,16 +120,12 @@ function ChatListItem({ chat }, ref) {
                     variant="body2"
                     color="textPrimary"
                   >
-                    {chat.lastMessageOwner === user.id ? (
-                      <Typography
-                        variant="p"
-                        sx={{ marginRight: 0.5, fontWeight: 600 }}
-                      >
-                        Вы:
-                      </Typography>
-                    ) : (
-                      ""
-                    )}
+                    <Typography
+                      variant="p"
+                      sx={{ marginRight: 0.5, fontWeight: 600 }}
+                    >
+                      {chat.lastMessage.senderId === user.id ? "Вы:" : ""}
+                    </Typography>
                     {chat.lastMessage.text.length > 20
                       ? chat?.lastMessage?.text?.substring(0, 15) + "..."
                       : chat.lastMessage?.text}
@@ -152,6 +158,6 @@ function ChatListItem({ chat }, ref) {
   );
 }
 
-const ref = forwardRef(ChatListItem);
+const reference = forwardRef(ChatListItem);
 
-export default motion(ref);
+export default motion(reference);

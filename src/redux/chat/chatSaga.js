@@ -7,11 +7,12 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase-setting";
-import { all, call, put, select, take } from "redux-saga/effects";
+import { db, realTimeDb } from "../../firebase-setting";
+import { all, call, fork, put, select, take } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { setChatMessages, setChats } from "../slices/chatSlice";
 import { createNewChat, sendNewMessage } from "./chatAPI";
+import { onValue, ref } from "firebase/database";
 
 //Слушатель чатов
 export function* chatsListenerSaga() {
@@ -43,6 +44,7 @@ export function* chatsListenerSaga() {
 
   while (true) {
     const allChats = yield take(chatsChannel);
+
     const newChats = yield all(
       allChats.map((chat) => {
         return call(getUserDB, { chat, state });
@@ -115,8 +117,12 @@ export function* getUserDB({ chat, state }) {
     return e != state.user.currentUser.id;
   })[0];
   const userRef = doc(db, "users", currentChatUser);
+
   const userSnap = yield getDoc(userRef);
   if (userSnap.exists()) {
-    return { ...chat, currentChatUser: userSnap.data() };
+    return {
+      ...chat,
+      currentChatUser: { id: userSnap.id, ...userSnap.data() },
+    };
   }
 }

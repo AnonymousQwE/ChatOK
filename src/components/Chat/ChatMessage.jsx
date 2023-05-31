@@ -82,7 +82,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
 
     const receivedMessage = {
       position: "relative",
-      display: "inline-block",
+      display: "block",
       maxWidth: "100%",
       backgroundColor: theme.palette.background.default,
       color: theme.palette.text.primary,
@@ -134,7 +134,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
         }}
       >
         <ListItemAvatar
-          ref={messRef}
           sx={{
             display: owner === "system" ? "none" : "flex",
           }}
@@ -146,6 +145,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
           />
         </ListItemAvatar>
         <Box
+          ref={messRef}
           sx={{
             maxWidth: "80%",
             display: "flex",
@@ -220,7 +220,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
           </Box>
         </ListItem>
       )}
-      {/* <Divider /> */}
     </>
   );
 }

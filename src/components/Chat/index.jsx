@@ -28,7 +28,7 @@ function Chat() {
         block: "end",
       });
     }
-  }, [chatMessages, chatRef.current]);
+  }, [chatMessages, messRef.current]);
 
   return (
     chatMessages && (
@@ -46,6 +46,8 @@ function Chat() {
       >
         <ChatHeader currentChat={currentChat} />
         <MessageList
+          layout
+          layoutScroll
           chatMessages={chatMessages}
           messRef={messRef}
           user={user}

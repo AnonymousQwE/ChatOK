@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, useMediaQuery, useTheme } from "@mui/material";
 import Chat from "../Chat/";
 import Sidebar from "../Sidebar";
 import { Route, Routes } from "react-router-dom";
@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 
 const MainLayout = () => {
   const { currentUser: user } = useSelector((state) => state.user);
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
+  console.log(mobile);
   return (
     <Box
       onContextMenu={(e) => {
@@ -33,7 +36,7 @@ const MainLayout = () => {
         </Grid>
         <Grid item sx={{ position: "relative", height: "100%" }} md={9} xs={12}>
           <Routes>
-            <Route element={<NoChat />} index />
+            <Route element={mobile ? <Sidebar /> : <NoChat />} index />
             <Route element={<Chat />} path={"chat/:id"} />
           </Routes>
         </Grid>
