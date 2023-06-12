@@ -9,19 +9,19 @@ import Typography from "@mui/material/Typography";
 import SearchItem from "./SearchItem";
 import { Box } from "@mui/system";
 
-export default function SearchResult({ status, active, result, searchText }) {
+export default function SearchResult({
+  status,
+  active,
+  result,
+  searchText,
+  setSearchText,
+}) {
   return (
     <List
       sx={{
         position: "absolute",
         right: 0,
         zIndex: 10,
-        // display:
-        //   (active && result.length) ||
-        //   status == "loading" ||
-        //   (active && searchText)
-        //     ? "flex"
-        //     : "none",
         display: searchText ? "flex" : "none",
         flexDirection: "column",
         alignItems: "center",
@@ -37,7 +37,9 @@ export default function SearchResult({ status, active, result, searchText }) {
         <Typography sx={{ color: "black" }}>LOADING</Typography>
       ) : result.length ? (
         result.map((res) => {
-          return <SearchItem key={res.id} res={res} />;
+          return (
+            <SearchItem setSearchText={setSearchText} key={res.id} res={res} />
+          );
         })
       ) : searchText ? (
         <Typography sx={{ color: "black" }}>"РЕЗУЛЬТАТОВ НЕТ"</Typography>

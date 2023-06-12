@@ -104,10 +104,14 @@ export function* sendMessageSaga(action) {
 // Saga создания чата
 export function* createChatSaga(action) {
   const state = yield select();
-  const newChatUser = { ...action.payload };
+  const newChatUser = { ...action.payload.res };
 
   let result = yield call(() =>
-    createNewChat({ newChatUser, currentUser: state.user.currentUser })
+    createNewChat({
+      newChatUser,
+      currentUser: state.user.currentUser,
+      navigate: action.payload.navigate,
+    })
   );
 }
 

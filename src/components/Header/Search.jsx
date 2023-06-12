@@ -93,6 +93,7 @@ export default function Search() {
         />
       </Box>
       <SearchResult
+        setSearchText={setSearchText}
         searchText={searchText}
         status={status}
         active={active}

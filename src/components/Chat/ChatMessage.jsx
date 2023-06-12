@@ -14,6 +14,7 @@ import { useInView } from "react-intersection-observer";
 import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { Done, DoneAll } from "@mui/icons-material";
+import ReactTimeAgo from "react-time-ago";
 
 function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
@@ -175,7 +176,14 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
               {chatUser?.displayName}
             </Typography>
             <Typography sx={{ fontSize: 10 }}>
-              {formatTimestamp(message.createDate)}
+              {
+                <ReactTimeAgo
+                  date={
+                    Number.isInteger(message.createDate) && message.createDate
+                  }
+                  locale="ru-RU"
+                />
+              }
             </Typography>
           </Box>
           <Box

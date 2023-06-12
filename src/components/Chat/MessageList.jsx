@@ -78,8 +78,8 @@ function MessageList(
                         ? newMessageOwner
                         : newMessage
                     }
-                    initial={"hidden"}
-                    animate={"visible"}
+                    // initial={"hidden"}
+                    // animate={"visible"}
                     owner={
                       message?.senderId === user.id
                         ? user

@@ -6,8 +6,12 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import store from "./redux/store";
+import TimeAgo from "javascript-time-ago";
+
+import ru from "javascript-time-ago/locale/ru.json";
 
 let theme = createTheme();
+TimeAgo.addDefaultLocale(ru);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={theme}>

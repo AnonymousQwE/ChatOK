@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { formatTimestamp } from "../../utils/time";
+import { Navigate } from "react-router-dom";
 
 // Отправка сообщения
 export const sendNewMessage = async (message) => {
@@ -49,17 +50,13 @@ export const sendNewMessage = async (message) => {
 };
 
 // Создание чата
-export const createNewChat = async ({ newChatUser, currentUser }) => {
+export const createNewChat = async ({ newChatUser, currentUser, navigate }) => {
   try {
     const q = query(
       collection(db, "chats"),
       where("members", "==", [newChatUser.id, currentUser.id])
     );
     const chatQuery = await getDocs(q);
-    console.log(chatQuery);
-    chatQuery.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-    });
     if (chatQuery.empty) {
       const systemMessage = {
         createDate: Timestamp.now(),
@@ -77,6 +74,11 @@ export const createNewChat = async ({ newChatUser, currentUser }) => {
         collection(db, `chats/${newChat.id}/messages`),
         systemMessage
       );
+    } else {
+      return chatQuery.forEach((doc) => {
+        console.log("Chat find");
+        navigate(`/chat/${doc.id}`);
+      });
     }
   } catch (e) {
     console.log(e);

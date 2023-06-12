@@ -10,11 +10,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { getUserDataFormDB } from "../../redux/user/userAPI";
 import { chatActions } from "../../redux/chat/chatAction";
+import { useNavigate } from "react-router-dom";
 
-export default function SearchItem({ res }) {
+export default function SearchItem({ res, setSearchText }) {
   const theme = useTheme();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   return (
     <Box
@@ -28,7 +29,11 @@ export default function SearchItem({ res }) {
         transition: ".5s",
       }}
       onClick={() => {
-        dispatch({ type: chatActions.CREATE_NEW_CHAT_SAGA, payload: res });
+        dispatch({
+          type: chatActions.CREATE_NEW_CHAT_SAGA,
+          payload: { res, navigate },
+        });
+        setSearchText("");
       }}
     >
       <ListItem sx={{ justifyContent: "center" }} alignItems="center">

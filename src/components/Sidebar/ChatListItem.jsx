@@ -18,6 +18,8 @@ import { motion } from "framer-motion";
 import { getUserDataFormDB } from "../../redux/user/userAPI";
 import { realTimeDb } from "../../firebase-setting";
 import { onValue, ref } from "firebase/database";
+import ReactTimeAgo from "react-time-ago";
+import { Timestamp } from "firebase/firestore";
 
 function ChatListItem({ chat }, reference) {
   const { currentUser: user } = useSelector((state) => state.user);
@@ -38,7 +40,14 @@ function ChatListItem({ chat }, reference) {
     const onlineRef = ref(realTimeDb, "status", chat.currentChatUser.id);
     onValue(onlineRef, (snap) => {
       const currentUserOnline = snap.val()[chat.currentChatUser.id];
-      setOnline(currentUserOnline);
+      console.log(currentUserOnline);
+      setOnline({
+        state: currentUserOnline.state,
+        lastOnline: new Timestamp(
+          currentUserOnline.last_changed.seconds,
+          currentUserOnline.last_changed.nanoseconds
+        ).toMillis(),
+      });
     });
   }, []);
 
@@ -86,7 +95,7 @@ function ChatListItem({ chat }, reference) {
                   },
                 }}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                invisible={!chat.isOnline}
+                invisible={online.state === "online" ? false : true}
                 variant={"dot"}
                 overlap={"circular"}
               >
@@ -143,10 +152,13 @@ function ChatListItem({ chat }, reference) {
                       borderRadius: 1,
                     }}
                   >
-                    {formatTimestamp(chat.lastMessage.createDate).substring(
-                      12,
-                      20
-                    )}
+                    <ReactTimeAgo
+                      date={
+                        Number.isInteger(chat.lastMessage.createDate) &&
+                        chat.lastMessage.createDate
+                      }
+                      locale="ru-RU"
+                    />
                   </Typography>
                 </Box>
               }
