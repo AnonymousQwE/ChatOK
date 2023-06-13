@@ -8,10 +8,9 @@ import {
 } from "@mui/material";
 import React, { forwardRef, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { formatTimestamp } from "../../utils/time";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { Done, DoneAll } from "@mui/icons-material";
 import ReactTimeAgo from "react-time-ago";
@@ -175,16 +174,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
             >
               {chatUser?.displayName}
             </Typography>
-            <Typography sx={{ fontSize: 10 }}>
-              {
-                <ReactTimeAgo
-                  date={
-                    Number.isInteger(message.createDate) && message.createDate
-                  }
-                  locale="ru-RU"
-                />
-              }
-            </Typography>
           </Box>
           <Box
             sx={{
@@ -203,9 +192,9 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
                 }}
                 variant="p"
               >
-                {message.status?.read ? (
+                {owner && message.status?.read ? (
                   <DoneAll fontSize="10" />
-                ) : message.status?.send ? (
+                ) : owner && message.status?.send ? (
                   <Done fontSize="10" />
                 ) : (
                   ""
@@ -213,6 +202,16 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
               </Typography>
             </Typography>
           </Box>
+                <Typography sx={{ fontSize: 10 }}>
+                  {
+                    <ReactTimeAgo
+                      date={
+                        Number.isInteger(message.createDate) && message.createDate
+                      }
+                      locale="ru-RU"
+                    />
+                  }
+                </Typography>
         </Box>
       </ListItem>
       {message.file && (

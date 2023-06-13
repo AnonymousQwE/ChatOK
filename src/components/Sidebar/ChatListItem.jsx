@@ -11,11 +11,9 @@ import {
 } from "@mui/material";
 import React, { forwardRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { setContextMenu } from "../../redux/slices/systemSlice";
-import { formatTimestamp } from "../../utils/time";
 import { motion } from "framer-motion";
-import { getUserDataFormDB } from "../../redux/user/userAPI";
 import { realTimeDb } from "../../firebase-setting";
 import { onValue, ref } from "firebase/database";
 import ReactTimeAgo from "react-time-ago";
@@ -23,7 +21,6 @@ import { Timestamp } from "firebase/firestore";
 
 function ChatListItem({ chat }, reference) {
   const { currentUser: user } = useSelector((state) => state.user);
-  const [online, setOnline] = useState("");
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -36,25 +33,11 @@ function ChatListItem({ chat }, reference) {
     );
   };
 
-  useEffect(() => {
-    const onlineRef = ref(realTimeDb, "status", chat.currentChatUser.id);
-    onValue(onlineRef, (snap) => {
-      const currentUserOnline = snap.val()[chat.currentChatUser.id];
-      console.log(currentUserOnline);
-      setOnline({
-        state: currentUserOnline.state,
-        lastOnline: new Timestamp(
-          currentUserOnline.last_changed.seconds,
-          currentUserOnline.last_changed.nanoseconds
-        ).toMillis(),
-      });
-    });
-  }, []);
+  useEffect(() => {}, []);
 
   const theme = useTheme();
 
   const dataAtr = { "data-id": chat.id };
-  console.log(online);
   return (
     <Box ref={reference}>
       <NavLink
@@ -95,7 +78,9 @@ function ChatListItem({ chat }, reference) {
                   },
                 }}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                invisible={online.state === "online" ? false : true}
+                invisible={
+                  chat.currentChatUser.online?.state === "online" ? false : true
+                }
                 variant={"dot"}
                 overlap={"circular"}
               >

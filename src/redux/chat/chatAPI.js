@@ -8,9 +8,11 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase-setting";
+import { db, realTimeDb } from "../../firebase-setting";
 import { formatTimestamp } from "../../utils/time";
 import { Navigate } from "react-router-dom";
+import { onValue, ref } from "firebase/database";
+import { setOnlineUsers } from "../slices/chatSlice";
 
 // Отправка сообщения
 export const sendNewMessage = async (message) => {

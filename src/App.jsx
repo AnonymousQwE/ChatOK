@@ -9,16 +9,25 @@ import MainLayout from "./components/Layout/MainLayout";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth";
 import Loader from "./components/Loader/Loader";
+import { chatActions } from "./redux/chat/chatAction";
 
 function App() {
   const dispatch = useDispatch();
   const { contextMenu, status } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
+  const { chats } = useSelector((state) => state.chat);
+
+  // useEffect(() => {
+  //   dispatch({
+  //     type: chatActions.GET_ONLINE_USERS,
+  //     payload: chats,
+  //   });
+  // }, [currentUser]);
 
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });
   }, []);
-  if (status) return <Loader/>;
+  if (status) return <Loader />;
   return (
     <>
       <Header />

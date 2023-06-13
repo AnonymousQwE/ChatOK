@@ -87,20 +87,6 @@ export function* sendMessageSaga(action) {
   let result = yield call(() => sendNewMessage(message));
 }
 
-// // Saga получения текущего чата
-
-// export function* getCurrentChat(action) {
-//   const state = yield select();
-//   const chatQuery = query(doc(db, "chats", action.payload));
-//   const chatData = yield call(() => getDoc(chatQuery));
-//   const currentChat = chatData.data();
-
-//   currentChat.lastMessage.createDate =
-//     currentChat.lastMessage.createDate.toMillis();
-//   currentChat.chatCreateDate = currentChat.chatCreateDate.toMillis();
-//   // yield put(setCurrentChat(currentChat));
-// }
-
 // Saga создания чата
 export function* createChatSaga(action) {
   const state = yield select();
@@ -121,12 +107,73 @@ export function* getUserDB({ chat, state }) {
     return e != state.user.currentUser.id;
   })[0];
   const userRef = doc(db, "users", currentChatUser);
-
   const userSnap = yield getDoc(userRef);
   if (userSnap.exists()) {
     return {
       ...chat,
       currentChatUser: { id: userSnap.id, ...userSnap.data() },
     };
+  }
+}
+
+// Saga получения онлайна пользователей
+export function* getOnlineUsers(action) {
+  const state = yield select();
+  const chatsUsers = [...action.payload.chatsUsers];
+
+  let result = yield call(() =>
+    getUserOnline({ chatsUsers, dispatch: action.payload.dispatch })
+  );
+  console.log(result);
+}
+
+//Слушатель онлайна пользователей
+export function* onlineListener() {
+  const state = yield select();
+
+  const onlineChannel = new eventChannel((emit) => {
+    let allOnline;
+    const onlineRef = ref(realTimeDb, "status");
+    const listener = onValue(onlineRef, (snap) => {
+      emit(snap.val());
+      // setOnline({
+      //   state: currentUserOnline.state,
+      //   lastOnline: new Timestamp(
+      //     currentUserOnline.last_changed.seconds,
+      //     currentUserOnline.last_changed.nanoseconds
+      //   ).toMillis(),
+      // });
+      // console.log(currentUsersOnline);
+      // emit(setOnlineUsers(currentUsersOnline));
+
+      // allChats.push({
+      //   ...currentChat,
+      //   id: chat.id,
+      //   chatCreateDate: currentChat.chatCreateDate.toMillis(),
+      // });
+    });
+    return () => {
+      listener.off();
+    };
+  });
+
+  while (true) {
+    const allOnline = yield take(onlineChannel);
+
+    const newChats = state.chat.chats.map((chat) => {
+      return {
+        ...chat,
+        currentChatUser: {
+          ...chat.currentChatUser,
+          online: allOnline[chat.currentChatUser.id],
+        },
+      };
+    });
+    // const newChats = yield all(
+    //   allChats.map((chat) => {
+    //     return call(getUserDB, { chat, state });
+    //   })
+    // );
+    yield put(setChats(newChats));
   }
 }
