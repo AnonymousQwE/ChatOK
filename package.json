@@ -15,6 +15,7 @@
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.11",
     "@reduxjs/toolkit": "^1.9.3",
+    "emoji-picker-react": "^4.4.9",
     "firebase": "^9.17.2",
     "framer-motion": "^10.12.4",
     "javascript-time-ago": "^2.5.9",

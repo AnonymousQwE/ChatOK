@@ -4,19 +4,20 @@ import Chat from "../Chat/";
 import Sidebar from "../Sidebar";
 import { Route, Routes } from "react-router-dom";
 import NoChat from "../Chat/NoChat";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setContextMenu } from "../../redux/slices/systemSlice";
+import ContextMenu from "../Sidebar/ContextMenu";
+import EmojiPicker, { Emoji } from "emoji-picker-react";
 
 const MainLayout = () => {
   const { currentUser: user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { contextMenu } = useSelector((state) => state.system);
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
-  console.log(mobile);
+
   return (
-    <Box
-      onContextMenu={(e) => {
-        e.preventDefault();
-      }}
-    >
+    <Box>
       <Grid
         container
         sx={{
@@ -31,7 +32,25 @@ const MainLayout = () => {
               width: "100%",
             }}
           >
-            <Sidebar />
+            <div
+              style={{ cursor: "context-menu" }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                dispatch(
+                  setContextMenu(
+                    contextMenu === null
+                      ? {
+                          mouseX: event.clientX + 2,
+                          mouseY: event.clientY - 6,
+                        }
+                      : null
+                  )
+                );
+              }}
+            >
+              {mobile ? "" : <Sidebar />}
+              <ContextMenu />
+            </div>
           </Box>
         </Grid>
         <Grid item sx={{ position: "relative", height: "100%" }} md={9} xs={12}>
@@ -41,6 +60,13 @@ const MainLayout = () => {
           </Routes>
         </Grid>
       </Grid>
+      <EmojiPicker
+        // height={0}
+        // width={0}
+        theme="dark"
+        onEmojiClick={(e) => console.log(typeof e.emoji)}
+      />
+      {/* <Emoji unified="1f423" size="25" /> */}
     </Box>
   );
 };

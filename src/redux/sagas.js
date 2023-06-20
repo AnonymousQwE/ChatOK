@@ -23,8 +23,8 @@ export function* rootSaga() {
   yield takeEvery(userActions.LOGOUT_USER_SAGA, logoutUserSaga);
   yield takeEvery(userActions.LOGIN_USER_SAGA, googleLoginUserSaga);
   yield takeEvery(chatActions.GET_USER_CHATS_SAGA, chatsListenerSaga);
-  yield takeEvery(chatActions.GET_ONLINE_USERS_SAGA, onlineListener);
   yield takeEvery(chatActions.GET_MESSAGES_SAGA, messageListenerSaga);
   yield takeEvery(chatActions.SEND_MESSAGE_SAGA, sendMessageSaga);
   yield takeEvery(chatActions.CREATE_NEW_CHAT_SAGA, createChatSaga);
+  yield takeEvery(chatActions.GET_ONLINE_USERS_SAGA, onlineListener);
 }

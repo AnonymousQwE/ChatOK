@@ -1,37 +1,65 @@
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import MenuList from "@mui/material/MenuList";
+import * as React from "react";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import Typography from "@mui/material/Typography";
-import Cloud from "@mui/icons-material/Cloud";
 import { useDispatch, useSelector } from "react-redux";
-import { Delete } from "@mui/icons-material";
+import { setContextMenu } from "../../redux/slices/systemSlice";
+import {
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  MenuList,
+  Paper,
+} from "@mui/material";
+import { Cloud, Delete } from "@mui/icons-material";
 import { deleteDoc } from "firebase/firestore";
-import { generateChatQuery, generateMessagesQuery } from "../../utils/query";
-// import { unsetContextMenu } from "../../storeOLD/systemSlice";
+import { generateChatQuery } from "../../utils/query";
 
 export default function ContextMenu() {
-  const dispatch = useDispatch();
+  // const [contextMenu, setContextMenu] = React.useState(null);
   const { contextMenu } = useSelector((state) => state.system);
+  const dispatch = useDispatch();
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    dispatch(
+      setContextMenu(
+        contextMenu === null
+          ? {
+              mouseX: event.clientX + 2,
+              mouseY: event.clientY - 6,
+            }
+          : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+            // Other native context menus might behave different.
+            // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+            null
+      )
+    );
+  };
+
+  const handleClose = () => {
+    dispatch(setContextMenu(null));
+  };
   return (
-    <Paper
-      sx={{
-        position: "absolute",
-        zIndex: 100,
-        top: `${contextMenu?.position?.mouseY}px`,
-        left: `${contextMenu?.position?.mouseX}px`,
-        width: 200,
-        maxWidth: "100%",
+    <Menu
+      open={contextMenu !== null}
+      onClose={(e) => {
+        e.preventDefault();
+        dispatch(setContextMenu(null));
       }}
+      anchorReference="anchorPosition"
+      anchorPosition={
+        contextMenu !== null
+          ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+          : undefined
+      }
     >
       <MenuList>
         <MenuItem
           onClick={async (e) => {
             await deleteDoc(generateChatQuery(contextMenu.ref));
 
-            dispatch(unsetContextMenu());
+            dispatch(setContextMenu(null));
           }}
         >
           <ListItemIcon>
@@ -50,6 +78,6 @@ export default function ContextMenu() {
           <ListItemText>Web Clipboard</ListItemText>
         </MenuItem>
       </MenuList>
-    </Paper>
+    </Menu>
   );
 }

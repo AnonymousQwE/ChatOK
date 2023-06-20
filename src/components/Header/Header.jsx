@@ -18,7 +18,6 @@ function Header() {
           </Link>
         </Typography>
         <Search />
-
         <UserProfile />
       </Toolbar>
     </AppBar>

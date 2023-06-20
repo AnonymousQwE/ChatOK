@@ -24,13 +24,13 @@ function ChatListItem({ chat }, reference) {
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
-    dispatch(
-      setContextMenu({
-        active: true,
-        position: { mouseX: event.pageX, mouseY: event.pageY },
-        ref: chat.id,
-      })
-    );
+    // dispatch(
+    //   setContextMenu({
+    //     active: true,
+    //     position: { mouseX: event.pageX, mouseY: event.pageY },
+    //     ref: chat.id,
+    //   })
+    // );
   };
 
   useEffect(() => {}, []);

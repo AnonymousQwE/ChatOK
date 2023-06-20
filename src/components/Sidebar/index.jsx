@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { List, Box, Paper } from "@mui/material";
+import { List, Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import ChatListItem from "./ChatListItem";
 import { chatActions } from "../../redux/chat/chatAction";
@@ -8,15 +8,6 @@ function Sidebar({ setContextMenu }) {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
   const { chats } = useSelector((state) => state.chat);
-
-  useEffect(() => {
-    if (user.id) {
-      dispatch({
-        type: chatActions.GET_USER_CHATS_SAGA,
-        payload: { id: user.id },
-      });
-    }
-  }, [user.id]);
 
   return (
     <Box

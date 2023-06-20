@@ -5,6 +5,7 @@ export const chatSlice = createSlice({
   initialState: {
     chats: [],
     chatMessages: [],
+    dialogUser: null,
   },
   reducers: {
     setChats: (state, action) => {
@@ -21,22 +22,13 @@ export const chatSlice = createSlice({
         chatMessages: allMessages,
       };
     },
-    setOnlineUsers: (state, action) => {
-      const allUsers = action.payload;
-      // console.log(allUsers);
-
-      const currentChats = state.chats.map((chat) => {
-        return {
-          ...chat,
-          currentChatUser: {
-            ...chat.currentChatUser,
-            online: allUsers[chat.currentChatUser.id],
-          },
-        };
-      });
-      return { ...state, chats: currentChats };
+    setDialogUser: (state, action) => {
+      return {
+        ...state,
+        dialogUser: action.payload,
+      };
     },
   },
 });
 
-export const { setChats, setChatMessages, setOnlineUsers } = chatSlice.actions;
+export const { setChats, setChatMessages, setDialogUser } = chatSlice.actions;

@@ -1,4 +1,5 @@
 import {
+  Timestamp,
   collection,
   doc,
   getDoc,
@@ -44,13 +45,13 @@ export function* chatsListenerSaga() {
 
   while (true) {
     const allChats = yield take(chatsChannel);
-
     const newChats = yield all(
       allChats.map((chat) => {
         return call(getUserDB, { chat, state });
       })
     );
     yield put(setChats(newChats));
+    yield call(onlineListener);
   }
 }
 
@@ -108,6 +109,7 @@ export function* getUserDB({ chat, state }) {
   })[0];
   const userRef = doc(db, "users", currentChatUser);
   const userSnap = yield getDoc(userRef);
+  console.log(userSnap.data());
   if (userSnap.exists()) {
     return {
       ...chat,
@@ -129,28 +131,11 @@ export function* getOnlineUsers(action) {
 
 //Слушатель онлайна пользователей
 export function* onlineListener() {
-  const state = yield select();
-
   const onlineChannel = new eventChannel((emit) => {
-    let allOnline;
     const onlineRef = ref(realTimeDb, "status");
     const listener = onValue(onlineRef, (snap) => {
+      const currentUserOnline = snap.val();
       emit(snap.val());
-      // setOnline({
-      //   state: currentUserOnline.state,
-      //   lastOnline: new Timestamp(
-      //     currentUserOnline.last_changed.seconds,
-      //     currentUserOnline.last_changed.nanoseconds
-      //   ).toMillis(),
-      // });
-      // console.log(currentUsersOnline);
-      // emit(setOnlineUsers(currentUsersOnline));
-
-      // allChats.push({
-      //   ...currentChat,
-      //   id: chat.id,
-      //   chatCreateDate: currentChat.chatCreateDate.toMillis(),
-      // });
     });
     return () => {
       listener.off();
@@ -158,6 +143,7 @@ export function* onlineListener() {
   });
 
   while (true) {
+    const state = yield select();
     const allOnline = yield take(onlineChannel);
 
     const newChats = state.chat.chats.map((chat) => {
@@ -165,15 +151,17 @@ export function* onlineListener() {
         ...chat,
         currentChatUser: {
           ...chat.currentChatUser,
-          online: allOnline[chat.currentChatUser.id],
+          online: {
+            lastChange: new Timestamp(
+              allOnline[chat.currentChatUser.id].last_changed.seconds,
+              allOnline[chat.currentChatUser.id].last_changed.nanoseconds
+            ).toMillis(),
+            state: allOnline[chat.currentChatUser.id].state,
+          },
         },
       };
     });
-    // const newChats = yield all(
-    //   allChats.map((chat) => {
-    //     return call(getUserDB, { chat, state });
-    //   })
-    // );
+
     yield put(setChats(newChats));
   }
 }

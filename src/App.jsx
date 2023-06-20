@@ -13,20 +13,25 @@ import { chatActions } from "./redux/chat/chatAction";
 
 function App() {
   const dispatch = useDispatch();
-  const { contextMenu, status } = useSelector((state) => state.system);
+  const { status } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
-  const { chats } = useSelector((state) => state.chat);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: chatActions.GET_ONLINE_USERS,
-  //     payload: chats,
-  //   });
-  // }, [currentUser]);
+  useEffect(() => {
+    if (currentUser.id) {
+      dispatch({
+        type: chatActions.GET_USER_CHATS_SAGA,
+        payload: { id: currentUser.id },
+      });
+      dispatch({
+        type: chatActions.GET_ONLINE_USERS_SAGA,
+      });
+    }
+  }, [currentUser.id]);
 
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });
   }, []);
+
   if (status) return <Loader />;
   return (
     <>
@@ -41,7 +46,6 @@ function App() {
           path={"/*"}
         />
       </Routes>
-      {contextMenu.active && <ContextMenu />}
     </>
   );
 }
