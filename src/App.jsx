@@ -19,21 +19,21 @@ function App() {
 
   useEffect(() => {
     if (currentUser.id) {
-      dispatch({
-        type: chatActions.GET_USER_CHATS_SAGA,
-        payload: { id: currentUser.id },
-      });
+      // dispatch({
+      //   type: chatActions.GET_USER_CHATS_SAGA,
+      //   payload: { id: currentUser.id },
+      // });
     }
   }, [currentUser.id]);
 
   useEffect(() => {
-    if (chats.length > 0) {
+    if (currentUser.id) {
       dispatch({
         type: chatActions.GET_ONLINE_USERS_SAGA,
         payload: chats,
       });
     }
-  }, [chats, currentUser.id, currentChat]);
+  }, [currentUser.id]);
 
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });

@@ -79,7 +79,7 @@ function ChatListItem({ chat }, reference) {
                 }}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 invisible={
-                  chat.currentChatUser.online?.state === "online" ? false : true
+                  chat.currentChatUser?.online?.state === "online" ? false : true
                 }
                 variant={"dot"}
                 overlap={"circular"}
