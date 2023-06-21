@@ -60,13 +60,7 @@ const MainLayout = () => {
           </Routes>
         </Grid>
       </Grid>
-      <EmojiPicker
-        // height={0}
-        // width={0}
-        theme="dark"
-        onEmojiClick={(e) => console.log(typeof e.emoji)}
-      />
-      {/* <Emoji unified="1f423" size="25" /> */}
+      
     </Box>
   );
 };

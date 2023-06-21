@@ -15,6 +15,7 @@ function App() {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.system);
   const { currentUser } = useSelector((state) => state.user);
+  const { chats, currentChat } = useSelector((state) => state.chat);
 
   useEffect(() => {
     if (currentUser.id) {
@@ -22,11 +23,17 @@ function App() {
         type: chatActions.GET_USER_CHATS_SAGA,
         payload: { id: currentUser.id },
       });
-      dispatch({
-        type: chatActions.GET_ONLINE_USERS_SAGA,
-      });
     }
   }, [currentUser.id]);
+
+  useEffect(() => {
+    if (chats.length > 0) {
+      dispatch({
+        type: chatActions.GET_ONLINE_USERS_SAGA,
+        payload: chats,
+      });
+    }
+  }, [chats, currentUser.id, currentChat]);
 
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });
