@@ -141,6 +141,7 @@ export const googleLoginUser = async () => {
         console.log(error);
       });
   }
+  console.log(currentUser);
   return currentUser;
 };
 
@@ -193,6 +194,7 @@ export const logoutUser = () => {
 
 // Получение информации о пользователе из БД
 export const getUserDataFormDB = async (currentUser) => {
+  console.log(currentUser);
   const userRef = doc(db, "users", currentUser.id);
   const userSnap = await getDoc(userRef);
   let currentUserData;

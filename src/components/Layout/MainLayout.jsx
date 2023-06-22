@@ -34,19 +34,19 @@ const MainLayout = () => {
           >
             <div
               style={{ cursor: "context-menu" }}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                dispatch(
-                  setContextMenu(
-                    contextMenu === null
-                      ? {
-                          mouseX: event.clientX + 2,
-                          mouseY: event.clientY - 6,
-                        }
-                      : null
-                  )
-                );
-              }}
+              // onContextMenu={(e) => {
+              //   e.preventDefault();
+              //   dispatch(
+              //     setContextMenu(
+              //       contextMenu === null
+              //         ? {
+              //             mouseX: event.clientX + 2,
+              //             mouseY: event.clientY - 6,
+              //           }
+              //         : null
+              //     )
+              //   );
+              // }}
             >
               {mobile ? "" : <Sidebar />}
               <ContextMenu />

@@ -12,7 +12,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDialogUser } from "../../redux/slices/chatSlice";
 import { Avatar, Box, Divider } from "@mui/material";
 import ReactTimeAgo from "react-time-ago";
-import { Info, InfoOutlined } from "@mui/icons-material";
+import {
+  Email,
+  EmailOutlined,
+  Info,
+  InfoOutlined,
+  LocalPhone,
+  LocalPhoneOutlined,
+  PhoneAndroid,
+  PhoneAndroidOutlined,
+} from "@mui/icons-material";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -100,26 +109,40 @@ export default function DialogUserProfile() {
                 sx={{
                   flex: 1,
                   alignItems: "flex-start",
+                  justifyContent: "center",
                 }}
               >
-                <Typography sx={{ fontWeight: "bold" }} gutterBottom>
-                  {`${dialogUser?.displayName}`}
-                </Typography>
-                <Typography sx={{ fontSize: 10 }} variant="subtitle2">
-                  {dialogUser?.online?.state !== "online" ? (
-                    <ReactTimeAgo
-                      date={
-                        Number.isInteger(dialogUser?.online?.lastChange)
-                          ? dialogUser?.online?.lastChange
-                          : 0
-                      }
-                      locale="ru-RU"
-                    />
-                  ) : (
-                    "онлайн"
-                  )}
-                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    flex: 1,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: "bold" }} gutterBottom>
+                    {`${dialogUser?.displayName}`}
+                  </Typography>
+                  <Typography sx={{ fontSize: 10 }} variant="subtitle2">
+                    {dialogUser?.online?.state !== "online" &&
+                    Number.isInteger(dialogUser?.online?.lastChange) ? (
+                      <ReactTimeAgo
+                        date={
+                          Number.isInteger(dialogUser?.online?.lastChange)
+                            ? dialogUser?.online?.lastChange
+                            : 0
+                        }
+                        locale="ru-RU"
+                      />
+                    ) : dialogUser?.online?.state === "online" ? (
+                      "онлайн"
+                    ) : (
+                      "Был(а) онлайн давно"
+                    )}
+                  </Typography>
+                </Box>
                 <Divider variant="middle" />
+
                 <Box
                   sx={{ display: "flex", mt: 1, alignItems: "center", gap: 2 }}
                 >
@@ -130,18 +153,20 @@ export default function DialogUserProfile() {
                       justifyContent: "center",
                     }}
                   >
-                    <InfoOutlined fontSize="large" />
+                    <PhoneAndroidOutlined fontSize="large" />
                   </Box>
                   <Box
                     sx={{
                       display: "inline-flex",
                       fontWeight: "bold",
+                      flex: 1,
                       flexDirection: "column",
                       alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <Typography sx={{ fontSize: 15 }}>
-                      {dialogUser?.phoneNumber}
+                      {dialogUser?.phoneNumber || "Нет"}
                     </Typography>
                     <Typography sx={{ fontSize: 13 }} variant="p">
                       Номер
@@ -159,7 +184,7 @@ export default function DialogUserProfile() {
                       justifyContent: "center",
                     }}
                   >
-                    <InfoOutlined fontSize="large" />
+                    <EmailOutlined fontSize="large" />
                   </Box>
                   <Box
                     sx={{
@@ -167,19 +192,25 @@ export default function DialogUserProfile() {
                       fontWeight: "bold",
                       flexDirection: "column",
                       alignItems: "center",
+                      flex: 1,
                     }}
                   >
                     <Typography sx={{ fontSize: 15 }}>
-                      {dialogUser?.phoneNumber}
+                      {dialogUser?.email}
                     </Typography>
                     <Typography sx={{ fontSize: 13 }} variant="p">
-                      Номер
+                      Email
                     </Typography>
                   </Box>
                 </Box>
                 <Divider variant="middle" />
                 <Box
-                  sx={{ display: "flex", mt: 1, alignItems: "center", gap: 2 }}
+                  sx={{
+                    display: "flex",
+                    mt: 1,
+                    alignItems: "center",
+                    gap: 2,
+                  }}
                 >
                   <Box
                     sx={{
@@ -194,18 +225,20 @@ export default function DialogUserProfile() {
                     sx={{
                       display: "inline-flex",
                       fontWeight: "bold",
+                      flex: 1,
                       flexDirection: "column",
                       alignItems: "center",
                     }}
                   >
                     <Typography sx={{ fontSize: 15 }}>
-                      {dialogUser?.phoneNumber}
+                      {dialogUser?.createDate.toDate().toLocaleString()}
                     </Typography>
                     <Typography sx={{ fontSize: 13 }} variant="p">
-                      Номер
+                      Дата создания
                     </Typography>
                   </Box>
                 </Box>
+                <Divider variant="middle" />
               </Box>
             </Box>
           </DialogContent>

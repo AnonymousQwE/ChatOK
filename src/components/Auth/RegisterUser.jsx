@@ -97,6 +97,26 @@ const RegisterUser = ({ setReg }) => {
           <FormHelperText>{errors?.userName?.message}</FormHelperText>
         </FormControl>
         <FormControl
+          error={errors.phoneNumber && true}
+          margin="dense"
+          fullWidth
+          variant="standard"
+        >
+          <InputLabel htmlFor="phoneNumber">Ваш номер телефона</InputLabel>
+          <Input
+            {...register("phoneNumber", {
+              required: "Это поле обязательно для заполнения",
+            })}
+            id="phoneNumber"
+            startAdornment={
+              <InputAdornment position="start">
+                <SavedSearch />
+              </InputAdornment>
+            }
+          />
+          <FormHelperText>{errors?.phoneNumber?.message}</FormHelperText>
+        </FormControl>
+        <FormControl
           error={errors.email ? true : false}
           margin="dense"
           fullWidth

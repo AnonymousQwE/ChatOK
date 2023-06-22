@@ -27,6 +27,7 @@ export default function SearchItem({ res, setSearchText }) {
           cursor: "pointer",
         },
         transition: ".5s",
+        width: "100%",
       }}
       onClick={() => {
         dispatch({
@@ -41,7 +42,7 @@ export default function SearchItem({ res, setSearchText }) {
           <Avatar
             sx={{ width: 50, height: 50 }}
             alt={res.displayName}
-            src={res.avatar}
+            src={res.photoURL}
           />
         </ListItemAvatar>
         <ListItemText
@@ -57,7 +58,7 @@ export default function SearchItem({ res, setSearchText }) {
               </Typography>
             </React.Fragment>
           }
-          secondary={"Был онлайн в 12:15"}
+          // secondary={"Был онлайн в 12:15"}
         />
       </ListItem>
       <Divider variant="inset" component="li" />

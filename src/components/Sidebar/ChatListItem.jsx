@@ -24,13 +24,13 @@ function ChatListItem({ chat }, reference) {
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
-    // dispatch(
-    //   setContextMenu({
-    //     active: true,
-    //     position: { mouseX: event.pageX, mouseY: event.pageY },
-    //     ref: chat.id,
-    //   })
-    // );
+    dispatch(
+      setContextMenu({
+        mouseX: event.pageX,
+        mouseY: event.pageY,
+        ref: chat.id,
+      })
+    );
   };
 
   useEffect(() => {}, []);
@@ -79,15 +79,17 @@ function ChatListItem({ chat }, reference) {
                 }}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 invisible={
-                  chat.currentChatUser?.online?.state === "online" ? false : true
+                  chat?.currentChatUser?.online?.state === "online"
+                    ? false
+                    : true
                 }
                 variant={"dot"}
                 overlap={"circular"}
               >
                 <Avatar
                   sx={{ width: 60, height: 60, marginRight: 1 }}
-                  src={chat.currentChatUser?.photoURL}
-                  alt={chat.currentChatUser?.displayName}
+                  src={chat?.currentChatUser?.photoURL}
+                  alt={chat?.currentChatUser?.displayName}
                 ></Avatar>
               </Badge>
             </ListItemAvatar>
@@ -98,7 +100,7 @@ function ChatListItem({ chat }, reference) {
                   sx={{ fontSize: { xs: 15, md: 20 } }}
                   variant={"body1"}
                 >
-                  {chat.currentChatUser.displayName}
+                  {chat?.currentChatUser?.displayName}
                 </Typography>
               }
               secondary={
@@ -118,9 +120,9 @@ function ChatListItem({ chat }, reference) {
                       variant="p"
                       sx={{ marginRight: 0.5, fontWeight: 600 }}
                     >
-                      {chat.lastMessage.senderId === user.id ? "Вы:" : ""}
+                      {chat?.lastMessage?.senderId === user.id ? "Вы:" : ""}
                     </Typography>
-                    {chat.lastMessage.text.length > 20
+                    {chat?.lastMessage?.text?.length > 20
                       ? chat?.lastMessage?.text?.substring(0, 15) + "..."
                       : chat.lastMessage?.text}
                   </Typography>
@@ -139,8 +141,8 @@ function ChatListItem({ chat }, reference) {
                   >
                     <ReactTimeAgo
                       date={
-                        Number.isInteger(chat.lastMessage.createDate) &&
-                        chat.lastMessage.createDate
+                        Number.isInteger(chat?.lastMessage?.createDate) &&
+                        chat?.lastMessage?.createDate
                       }
                       locale="ru-RU"
                     />

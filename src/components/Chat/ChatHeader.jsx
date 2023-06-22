@@ -30,7 +30,8 @@ export default function ChatHeader({ currentChat }) {
           {currentChat?.currentChatUser?.displayName}
         </Typography>
         <Typography sx={{ fontSize: 10 }} variant="subtitle2">
-          {currentChat?.currentChatUser?.online?.state !== "online" ? (
+          {currentChat?.currentChatUser?.online?.state !== "online" &&
+          Number.isInteger(currentChat?.currentChatUser?.online?.lastChange) ? (
             <ReactTimeAgo
               date={
                 Number.isInteger(
@@ -41,8 +42,10 @@ export default function ChatHeader({ currentChat }) {
               }
               locale="ru-RU"
             />
-          ) : (
+          ) : currentChat?.currentChatUser?.online?.state === "online" ? (
             "онлайн"
+          ) : (
+            "Был(а) онлайн давно"
           )}
         </Typography>
       </Box>

@@ -15,18 +15,14 @@ import { setChatMessages, setChats } from "../slices/chatSlice";
 import { createNewChat, sendNewMessage } from "./chatAPI";
 import { onValue, ref, update } from "firebase/database";
 
-
-
 function initListener({ chatQuery, onlineRef }) {
   return eventChannel((emit) => {
-
     const unsubscribe = onSnapshot(chatQuery, (querySnapshot) => {
       const allChats = [];
       querySnapshot.forEach((chat) => {
         const currentChat = chat.data();
         currentChat.lastMessage.createDate =
           currentChat.lastMessage.createDate.toMillis();
-
         allChats.push({
           ...currentChat,
           id: chat.id,
@@ -35,7 +31,6 @@ function initListener({ chatQuery, onlineRef }) {
         emit({ type: "chats", data: allChats });
       });
     });
-
 
     const listener = onValue(onlineRef, (snap) => {
       emit({ type: "online", data: snap.val() });
@@ -57,11 +52,10 @@ export function* initListenerSaga() {
   );
   const onlineRef = ref(realTimeDb, "status");
 
-  const chan = yield call(initListener, { chatQuery, onlineRef })
+  const chan = yield call(initListener, { chatQuery, onlineRef });
   try {
-
     while (true) {
-      const data = yield take(chan)
+      const data = yield take(chan);
       const newState = yield select();
 
       switch (data.type) {
@@ -72,33 +66,25 @@ export function* initListenerSaga() {
             })
           );
 
-
           if (newState.chat.chats.length != 0) {
-            const updateChat = newState.chat.chats.map(chat =>
-              data.data.map(newChat => {
-                if (newChat.id === chat.id) {
-                  const currentChat = {
-                    currentChatUser: { ...chat.currentChatUser, online: chat.currentChatUser.online },
-                    ...newChat
-                  }
-                  console.log(currentChat)
-                  return currentChat
-                }
-              })
-            )
-            yield put(setChats(updateChat));
-          } else {
-            yield put(setChats(chatsUserData))
-          }
+            const updateChats = data.data;
+            console.log(updateChats);
 
-          console.log(data.data)
-          console.log(chatsUserData)
+            const newChats = updateChats.map((chat) => {
+              const oldChat = newState.chat.chats.find((c) => c.id === chat.id);
+              console.log(oldChat);
+              return { currentChatUser: oldChat.currentChatUser, ...chat };
+            });
+            yield put(setChats(newChats));
+          } else {
+            console.log(chatsUserData);
+            yield put(setChats(chatsUserData));
+          }
 
           break;
         case "online":
-          const allOnline = data.data
+          const allOnline = data.data;
           if (newState.chat.chats.length != 0) {
-
             const newChats = newState.chat.chats.map((chat) => {
               return {
                 ...chat,
@@ -107,7 +93,9 @@ export function* initListenerSaga() {
                   online: {
                     lastChange: new Timestamp(
                       allOnline[chat.currentChatUser.id].last_changed.seconds,
-                      allOnline[chat.currentChatUser.id].last_changed.nanoseconds
+                      allOnline[
+                        chat.currentChatUser.id
+                      ].last_changed.nanoseconds
                     ).toMillis(),
                     state: allOnline[chat.currentChatUser.id].state,
                   },
@@ -122,56 +110,12 @@ export function* initListenerSaga() {
           break;
       }
     }
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
   } finally {
-    console.log("final")
+    console.log("final");
   }
 }
-
-
-
-
-//Слушатель чатов
-// export function* chatsListenerSaga() {
-//   const state = yield select();
-
-//   const chatsChannel = new eventChannel((emit) => {
-//     const q = query(
-//       collection(db, "chats"),
-//       where("members", "array-contains", state.user.currentUser.id)
-//     );
-
-//     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-//       const allChats = [];
-//       querySnapshot.forEach((chat) => {
-//         const currentChat = chat.data();
-//         currentChat.lastMessage.createDate =
-//           currentChat.lastMessage.createDate.toMillis();
-
-//         allChats.push({
-//           ...currentChat,
-//           id: chat.id,
-//           chatCreateDate: currentChat.chatCreateDate.toMillis(),
-//         });
-//         emit(allChats);
-//       });
-//     });
-//     return unsubscribe;
-//   });
-
-//   while (true) {
-//     const allChats = yield take(chatsChannel);
-
-//     const newChats = yield all(
-//       allChats.map((chat) => {
-//         return call(getUserDB, { chat, state });
-//       })
-//     );
-//     yield put(setChats(newChats));
-//   }
-// }
 
 // Слушатель сообщений текущего чата
 export function* messageListenerSaga({ payload }) {
@@ -228,59 +172,13 @@ export function* getUserDB({ chat, state }) {
   const userRef = doc(db, "users", currentChatUser);
   const userSnap = yield getDoc(userRef);
   if (userSnap.exists()) {
-    console.log(chat)
     const currentChat = {
       ...chat,
       currentChatUser: { id: userSnap.id, ...userSnap.data() },
-    }
+    };
     if (chat?.currentChatUser?.online) {
-      currentChat.currentChatUser.online = chat.currentChatUser.online
+      currentChat.currentChatUser.online = chat.currentChatUser.online;
     }
     return currentChat;
-  }
-}
-
-// Saga получения онлайна пользователей
-export function* getOnlineUsers(action) {
-  const chatsUsers = [...action.payload.chatsUsers];
-
-  let result = yield call(() =>
-    getUserOnline({ chatsUsers, dispatch: action.payload.dispatch })
-  );
-  console.log(result);
-}
-
-//Слушатель онлайна пользователей
-export function* onlineListener(action) {
-  const onlineChannel = new eventChannel((emit) => {
-    const onlineRef = ref(realTimeDb, "status");
-    const listener = onValue(onlineRef, (snap) => {
-      emit(snap.val());
-    });
-    return () => {
-      listener.off();
-    };
-  });
-
-  while (true) {
-    const allOnline = yield take(onlineChannel);
-    console.log(allOnline);
-    // const newChats = action.payload.map((chat) => {
-    //   return {
-    //     ...chat,
-    //     currentChatUser: {
-    //       ...chat.currentChatUser,
-    //       online: {
-    //         lastChange: new Timestamp(
-    //           allOnline[chat.currentChatUser.id].last_changed.seconds,
-    //           allOnline[chat.currentChatUser.id].last_changed.nanoseconds
-    //         ).toMillis(),
-    //         state: allOnline[chat.currentChatUser.id].state,
-    //       },
-    //     },
-    //   };
-    // });
-
-    // yield put(setChats(newChats));
   }
 }

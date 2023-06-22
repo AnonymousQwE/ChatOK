@@ -21,7 +21,7 @@ function Chat() {
       dispatch({ type: chatActions.GET_MESSAGES_SAGA, payload: id });
     }
   }, [id]);
-
+  console.log(currentChat);
   useEffect(() => {
     if (messRef.current) {
       messRef.current?.scrollIntoView({

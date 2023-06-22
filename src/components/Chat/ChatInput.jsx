@@ -15,7 +15,6 @@ export default function ChatInput({ id }) {
   const dispatch = useDispatch();
   const handleSendMessage = (e) => {
     e.preventDefault();
-    console.log(messageText);
     if (messageText.trim() !== "") {
       dispatch({
         type: chatActions.SEND_MESSAGE_SAGA,
