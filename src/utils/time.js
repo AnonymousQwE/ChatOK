@@ -12,10 +12,7 @@ export function formatTimestamp(timestamp) {
 
 export const generateTextToTime = (timestamp) => {
   const timeDiff = Math.round(
-    Math.abs(
-      timestamp -
-        Timestamp.fromDate(new Date()).toDate().getTime()
-    ) /
+    Math.abs(timestamp - Timestamp.fromDate(new Date()).toDate().getTime()) /
       1000 /
       60
   );

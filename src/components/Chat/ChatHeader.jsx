@@ -21,7 +21,6 @@ export default function ChatHeader({ currentChat }) {
       }}
       onClick={(e) => {
         dispatch(setDialogUser(currentChat.currentChatUser));
-        console.log("set users");
       }}
     >
       <Avatar src={currentChat?.currentChatUser?.photoURL} />

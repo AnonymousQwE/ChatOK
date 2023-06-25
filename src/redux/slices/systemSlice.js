@@ -11,7 +11,6 @@ export const systemSlice = createSlice({
       return { ...state, status: action.payload };
     },
     setContextMenu: (state, action) => {
-      console.log(action.payload);
       return { ...state, contextMenu: action.payload };
     },
   },

@@ -227,7 +227,6 @@ const RegisterUser = ({ setReg }) => {
             Войти
           </Link>
         </Typography>
-        {errors && console.log(errors)}
       </form>
     </>
   );

@@ -51,7 +51,6 @@ export default function UserProfileDialog({ currentChatUser }) {
   const { dialogUser } = useSelector((state) => state.chat);
 
   const handleClose = (e) => {
-    console.log("close");
     dispatch(setDialogUser(null));
     e.stopPropagation();
   };

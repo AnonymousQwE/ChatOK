@@ -9,7 +9,6 @@ const Auth = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [reg, setReg] = useState(false);
   if (currentUser.id) return <Navigate to={"/"} />;
-  console.log(currentUser);
   return (
     <Grid
       sx={{

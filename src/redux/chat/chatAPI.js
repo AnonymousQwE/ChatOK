@@ -75,7 +75,6 @@ export const createNewChat = async ({ newChatUser, currentUser, navigate }) => {
       navigate(`/chat/${newChat.id}`);
     } else {
       return chatQuery.forEach((doc) => {
-        console.log("Chat find");
         navigate(`/chat/${doc.id}`);
       });
     }

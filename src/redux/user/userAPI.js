@@ -141,14 +141,12 @@ export const googleLoginUser = async () => {
         console.log(error);
       });
   }
-  console.log(currentUser);
   return currentUser;
 };
 
 //Регистрация пользователя через Email
 export const registerUserEmail = async (userData) => {
   let newUser;
-  console.log(userData);
   await createUserWithEmailAndPassword(auth, userData.email, userData.password)
     .then((userCredential) => {
       newUser = { ...userCredential.user, id: userCredential.user.uid };
@@ -194,7 +192,6 @@ export const logoutUser = () => {
 
 // Получение информации о пользователе из БД
 export const getUserDataFormDB = async (currentUser) => {
-  console.log(currentUser);
   const userRef = doc(db, "users", currentUser.id);
   const userSnap = await getDoc(userRef);
   let currentUserData;
@@ -206,7 +203,6 @@ export const getUserDataFormDB = async (currentUser) => {
       role: "user",
       createDate: Timestamp.now(),
     };
-    console.log(newUser);
     delete newUser.id;
     delete newUser.password;
     delete newUser.password2;

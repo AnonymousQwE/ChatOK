@@ -13,13 +13,8 @@ import { setDialogUser } from "../../redux/slices/chatSlice";
 import { Avatar, Box, Divider } from "@mui/material";
 import ReactTimeAgo from "react-time-ago";
 import {
-  Email,
   EmailOutlined,
-  Info,
   InfoOutlined,
-  LocalPhone,
-  LocalPhoneOutlined,
-  PhoneAndroid,
   PhoneAndroidOutlined,
 } from "@mui/icons-material";
 
