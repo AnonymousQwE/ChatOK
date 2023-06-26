@@ -11,7 +11,7 @@ export default function ChatInput({ id }) {
   const [messageText, setMessageText] = useState("");
   const { currentUser } = useSelector((state) => state.user);
   const [showSmile, setShowSmile] = useState(false);
-
+  window.global = window;
   const dispatch = useDispatch();
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -34,6 +34,7 @@ export default function ChatInput({ id }) {
   };
 
   const handleSmile = (emoji) => {
+    console.log(emoji);
     setMessageText(messageText + emoji.emoji);
   };
 
@@ -61,20 +62,22 @@ export default function ChatInput({ id }) {
                 sx={{ position: "relative" }}
                 onClick={handleShowSmile}
               >
-                <TagFaces fontSize="large" />
+                <TagFaces fontSize="large" color={showSmile ? "primary" : ""} />
               </IconButton>
               <Box
                 sx={{
                   zIndex: 10,
                   display: showSmile ? "" : "none",
                   position: "absolute",
-                  right: 50,
-                  bottom: 50,
+                  right: 90,
+                  width: "300px",
+                  height: "300px",
+                  bottom: 45,
                 }}
               >
                 <EmojiPicker
-                  // height={0}
-                  // width={0}
+                  height={300}
+                  width={300}
                   // theme="dark"
                   onEmojiClick={handleSmile}
                 />
@@ -86,8 +89,6 @@ export default function ChatInput({ id }) {
           ),
         }}
       />
-
-      {/* <Emoji unified="1f423" size="25" /> */}
     </Box>
   );
 }

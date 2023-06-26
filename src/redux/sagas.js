@@ -12,6 +12,7 @@ import {
   // chatsListenerSaga,
   createChatSaga,
   initListenerSaga,
+  initOnlineListenerSaga,
   messageListenerSaga,
   sendMessageSaga,
 } from "./chat/chatSaga";
@@ -25,5 +26,6 @@ export function* rootSaga() {
   yield takeEvery(chatActions.GET_MESSAGES_SAGA, messageListenerSaga);
   yield takeEvery(chatActions.SEND_MESSAGE_SAGA, sendMessageSaga);
   yield takeEvery(chatActions.CREATE_NEW_CHAT_SAGA, createChatSaga);
-  yield takeEvery(chatActions.GET_ONLINE_USERS_SAGA, initListenerSaga);
+  yield takeEvery(chatActions.GET_CHATS_SAGA, initListenerSaga);
+  yield takeEvery(chatActions.GET_ONLINE_USERS_SAGA, initOnlineListenerSaga);
 }

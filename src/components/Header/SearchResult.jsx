@@ -21,8 +21,8 @@ export default function SearchResult({
       sx={{
         position: "absolute",
         right: 0,
-        zIndex: 10,
-        display: searchText ? "flex" : "none",
+        zIndex: 100,
+        display: searchText && active ? "flex" : "none",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
@@ -34,7 +34,7 @@ export default function SearchResult({
       }}
     >
       {active && status === "loading" ? (
-        <Typography sx={{ color: "black" }}>LOADING</Typography>
+        <Typography sx={{ color: "black" }}>Поиск...</Typography>
       ) : result.length ? (
         result.map((res) => {
           return (
@@ -42,7 +42,9 @@ export default function SearchResult({
           );
         })
       ) : searchText ? (
-        <Typography sx={{ color: "black" }}>"РЕЗУЛЬТАТОВ НЕТ"</Typography>
+        <Typography sx={{ color: "black", fontSize: 13, textAlign:'center' }}>
+          Нет результатов, введите полный Username...
+        </Typography>
       ) : (
         ""
       )}

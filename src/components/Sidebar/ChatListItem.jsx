@@ -21,6 +21,7 @@ import { Timestamp } from "firebase/firestore";
 
 function ChatListItem({ chat }, reference) {
   const { currentUser: user } = useSelector((state) => state.user);
+  const [unreadMessage, setUnreadMessage] = useState(3);
   const dispatch = useDispatch();
   const handleContextMenu = (event) => {
     event.preventDefault();
@@ -33,10 +34,8 @@ function ChatListItem({ chat }, reference) {
     );
   };
 
-  useEffect(() => {}, []);
-
   const theme = useTheme();
-
+  console.log(chat.lastMessage);
   const dataAtr = { "data-id": chat.id };
   return (
     <Box ref={reference}>
@@ -69,28 +68,37 @@ function ChatListItem({ chat }, reference) {
           >
             <ListItemAvatar>
               <Badge
-                sx={{
-                  "& .MuiBadge-badge": {
-                    width: 13,
-                    height: 13,
-                    borderRadius: "50%",
-                    backgroundColor: "green",
-                  },
-                }}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                invisible={
-                  chat?.currentChatUser?.online?.state === "online"
-                    ? false
-                    : true
-                }
-                variant={"dot"}
+                invisible={chat.lastMessage.senderId === user.id ? true : false}
+                color="info"
+                badgeContent={chat.noReadMessage}
+                anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                variant={"standard"}
                 overlap={"circular"}
               >
-                <Avatar
-                  sx={{ width: 60, height: 60, marginRight: 1 }}
-                  src={chat?.currentChatUser?.photoURL}
-                  alt={chat?.currentChatUser?.displayName}
-                ></Avatar>
+                <Badge
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      width: 13,
+                      height: 13,
+                      borderRadius: "50%",
+                      backgroundColor: "green",
+                    },
+                  }}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  invisible={
+                    chat?.currentChatUser?.online?.state === "online"
+                      ? false
+                      : true
+                  }
+                  variant={"dot"}
+                  overlap={"circular"}
+                >
+                  <Avatar
+                    sx={{ width: 60, height: 60, marginRight: 1 }}
+                    src={chat?.currentChatUser?.photoURL}
+                    alt={chat?.currentChatUser?.displayName}
+                  ></Avatar>
+                </Badge>
               </Badge>
             </ListItemAvatar>
             <ListItemText

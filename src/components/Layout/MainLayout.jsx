@@ -21,7 +21,7 @@ const MainLayout = () => {
       <Grid
         container
         sx={{
-          height: "calc(100vh - 64px)",
+          height: mobile ? "calc(100vh - 128px)" : "calc(100vh - 64px)",
         }}
       >
         <Grid sx={{ position: "relative" }} item md={3} xs={12}>
@@ -32,22 +32,7 @@ const MainLayout = () => {
               width: "100%",
             }}
           >
-            <div
-              style={{ cursor: "context-menu" }}
-              // onContextMenu={(e) => {
-              //   e.preventDefault();
-              //   dispatch(
-              //     setContextMenu(
-              //       contextMenu === null
-              //         ? {
-              //             mouseX: event.clientX + 2,
-              //             mouseY: event.clientY - 6,
-              //           }
-              //         : null
-              //     )
-              //   );
-              // }}
-            >
+            <div style={{ cursor: "context-menu" }}>
               {mobile ? "" : <Sidebar />}
               <ContextMenu />
             </div>
@@ -60,7 +45,6 @@ const MainLayout = () => {
           </Routes>
         </Grid>
       </Grid>
-      
     </Box>
   );
 };

@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   getDocs,
+  increment,
   query,
   updateDoc,
   where,
@@ -31,6 +32,7 @@ export const sendNewMessage = async (message) => {
     const currentChatRef = doc(db, `chats`, message.chatId);
 
     await updateDoc(currentChatRef, {
+      noReadMessage: increment(1),
       lastMessage: {
         text: message.text,
         senderId: message.owner,

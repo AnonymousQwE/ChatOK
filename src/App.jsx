@@ -11,7 +11,14 @@ import Auth from "./components/Auth";
 import Loader from "./components/Loader/Loader";
 import { chatActions } from "./redux/chat/chatAction";
 import { db } from "./firebase-setting";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { onValue } from "firebase/database";
 
 function App() {
   const dispatch = useDispatch();
@@ -19,17 +26,22 @@ function App() {
   const { currentUser } = useSelector((state) => state.user);
   const { chats, currentChat } = useSelector((state) => state.chat);
 
-
-
-
   useEffect(() => {
     if (currentUser.id) {
+      dispatch({
+        type: chatActions.GET_CHATS_SAGA,
+      });
+    }
+  }, [currentUser.id]);
+
+  useEffect(() => {
+    if (chats.length != 0) {
       dispatch({
         type: chatActions.GET_ONLINE_USERS_SAGA,
         payload: chats,
       });
     }
-  }, [currentUser.id]);
+  }, [chats]);
 
   useEffect(() => {
     dispatch({ type: userActions.CHECK_USER_SAGA, payload: { dispatch } });

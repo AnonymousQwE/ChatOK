@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import { List, Box } from "@mui/material";
+import { List, Box, Typography, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import ChatListItem from "./ChatListItem";
 import { chatActions } from "../../redux/chat/chatAction";
+import Loader from "../Loader/Loader";
 
 function Sidebar({ setContextMenu }) {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
-  const { chats } = useSelector((state) => state.chat);
+  const { chats, loading } = useSelector((state) => state.chat);
 
   return (
     <Box
@@ -20,7 +21,25 @@ function Sidebar({ setContextMenu }) {
       }}
     >
       <List sx={{ marginX: 0.5 }}>
-        {chats &&
+        {loading ? (
+          <Typography>Загрузка чатов...</Typography>
+        ) : chats.length == 0 ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography fontWeight={600} fontSize={18}>
+              Нет чатов
+            </Typography>
+            <Button sx={{ fontSize: 12 }} variant="outlined">
+              Начать новый чат
+            </Button>
+          </Box>
+        ) : (
           [...chats]
             .sort((chat1, chat2) =>
               chat1.lastMessage.createDate - chat2.lastMessage.createDate > 0
@@ -36,7 +55,8 @@ function Sidebar({ setContextMenu }) {
                 key={chat.id}
                 chat={chat}
               />
-            ))}
+            ))
+        )}
       </List>
     </Box>
   );

@@ -10,7 +10,7 @@ import React, { forwardRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, increment, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { Done, DoneAll } from "@mui/icons-material";
 import ReactTimeAgo from "react-time-ago";
@@ -23,13 +23,24 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   });
 
   useEffect(() => {
-    if (inView && message.senderId !== user.id) {
+    if (
+      inView &&
+      message.senderId !== user.id &&
+      message.senderId !== "system" &&
+      message.status.read === false
+    ) {
+      console.log(message);
       const messagesRef = doc(db, `chats/${chatId}/messages`, message.id);
+      const currentChatRef = doc(db, `chats`, chatId);
+
       updateDoc(messagesRef, {
         status: {
           ...message.status,
           read: true,
         },
+      });
+      updateDoc(currentChatRef, {
+        noReadMessage: increment(-1),
       });
     }
   }, [inView]);
@@ -202,16 +213,16 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
               </Typography>
             </Typography>
           </Box>
-                <Typography sx={{ fontSize: 10 }}>
-                  {
-                    <ReactTimeAgo
-                      date={
-                        Number.isInteger(message.createDate) && message.createDate
-                      }
-                      locale="ru-RU"
-                    />
-                  }
-                </Typography>
+          <Typography sx={{ fontSize: 10 }}>
+            {
+              <ReactTimeAgo
+                date={
+                  Number.isInteger(message.createDate) && message.createDate
+                }
+                locale="ru-RU"
+              />
+            }
+          </Typography>
         </Box>
       </ListItem>
       {message.file && (

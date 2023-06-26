@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { alpha, InputBase, styled, TextField, useTheme } from "@mui/material";
-import { collection, getDocs, limit, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import SearchResult from "./SearchResult";
 import { Box } from "@mui/system";

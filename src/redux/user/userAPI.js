@@ -76,7 +76,7 @@ export const setOnline = (id) => {
   }
 };
 
-// Авторизация через Google ПК/Андроид
+// Авторизация через Google / ПК / Андроид
 export const googleLoginUser = async () => {
   let currentUser;
   if (
@@ -206,6 +206,7 @@ export const getUserDataFormDB = async (currentUser) => {
     delete newUser.id;
     delete newUser.password;
     delete newUser.password2;
+    newUser.userName = newUser.userName.toLowerCase();
     await setDoc(userRef, newUser);
     const NewUserSnap = await getDoc(userRef);
     if (NewUserSnap.exists()) {

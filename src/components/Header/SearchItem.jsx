@@ -58,10 +58,8 @@ export default function SearchItem({ res, setSearchText }) {
               </Typography>
             </React.Fragment>
           }
-          // secondary={"Был онлайн в 12:15"}
         />
       </ListItem>
-      <Divider variant="inset" component="li" />
     </Box>
   );
 }

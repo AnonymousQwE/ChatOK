@@ -3,11 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 export const chatSlice = createSlice({
   name: "chat",
   initialState: {
+    loading: true,
     chats: [],
     chatMessages: [],
     dialogUser: null,
   },
   reducers: {
+    setLoadingChats: (state, action) => {
+      return {
+        ...state,
+        loading: action.payload,
+      };
+    },
     setChats: (state, action) => {
       const newChats = action.payload;
       return {
@@ -32,5 +39,10 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { setChats, setOnline, setChatMessages, setDialogUser } =
-  chatSlice.actions;
+export const {
+  setChats,
+  setOnline,
+  setChatMessages,
+  setDialogUser,
+  setLoadingChats,
+} = chatSlice.actions;
