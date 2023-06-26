@@ -35,7 +35,6 @@ function ChatListItem({ chat }, reference) {
   };
 
   const theme = useTheme();
-  console.log(chat.lastMessage);
   const dataAtr = { "data-id": chat.id };
   return (
     <Box ref={reference}>

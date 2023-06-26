@@ -10,26 +10,8 @@ import { deleteDoc } from "firebase/firestore";
 import { generateChatQuery } from "../../utils/query";
 
 export default function ContextMenu() {
-  // const [contextMenu, setContextMenu] = React.useState(null);
   const { contextMenu } = useSelector((state) => state.system);
   const dispatch = useDispatch();
-
-  // const handleContextMenu = (event) => {
-  //   event.preventDefault();
-  //   dispatch(
-  //     setContextMenu(
-  //       contextMenu === null
-  //         ? {
-  //             mouseX: event.clientX + 2,
-  //             mouseY: event.clientY - 6,
-  //           }
-  //         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-  //           // Other native context menus might behave different.
-  //           // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-  //           null
-  //     )
-  //   );
-  // };
 
   const handleClose = () => {
     dispatch(setContextMenu(null));
@@ -60,16 +42,6 @@ export default function ContextMenu() {
             <Delete fontSize="small" />
           </ListItemIcon>
           <ListItemText>Удалить</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            ⌘D
-          </Typography>
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <Cloud fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Web Clipboard</ListItemText>
         </MenuItem>
       </MenuList>
     </Menu>

@@ -16,6 +16,7 @@ import {
   EmailOutlined,
   InfoOutlined,
   PhoneAndroidOutlined,
+  SupervisedUserCircleOutlined,
 } from "@mui/icons-material";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -107,34 +108,40 @@ export default function DialogUserProfile() {
                   justifyContent: "center",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    flex: 1,
-                  }}
-                >
-                  <Typography sx={{ fontWeight: "bold" }} gutterBottom>
-                    {`${dialogUser?.displayName}`}
-                  </Typography>
-                  <Typography sx={{ fontSize: 10 }} variant="subtitle2">
-                    {dialogUser?.online?.state !== "online" &&
-                    Number.isInteger(dialogUser?.online?.lastChange) ? (
-                      <ReactTimeAgo
-                        date={
-                          Number.isInteger(dialogUser?.online?.lastChange)
-                            ? dialogUser?.online?.lastChange
-                            : 0
-                        }
-                        locale="ru-RU"
-                      />
-                    ) : dialogUser?.online?.state === "online" ? (
-                      "онлайн"
-                    ) : (
-                      "Был(а) онлайн давно"
-                    )}
-                  </Typography>
+                <Box sx={{ display: "flex", flex: 1 }}>
+                  <SupervisedUserCircleOutlined fontSize="large" />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      flex: 1,
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: "bold" }} gutterBottom>
+                      {`${dialogUser?.displayName}`}
+                    </Typography>
+                    <Typography sx={{ fontSize: 10 }} variant="subtitle2">
+                      {dialogUser?.online?.state !== "online" &&
+                      Number.isInteger(dialogUser?.online?.lastChange) ? (
+                        <Typography variant="p">
+                          {"Был(а) онлайн "}
+                           <ReactTimeAgo
+                            date={
+                              Number.isInteger(dialogUser?.online?.lastChange)
+                                ? dialogUser?.online?.lastChange
+                                : 0
+                            }
+                            locale="ru-RU"
+                          />
+                        </Typography>
+                      ) : dialogUser?.online?.state === "online" ? (
+                        "онлайн"
+                      ) : (
+                        "Был(а) онлайн давно"
+                      )}
+                    </Typography>
+                  </Box>
                 </Box>
                 <Divider variant="middle" />
 

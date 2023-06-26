@@ -94,6 +94,27 @@ export function* loginUserEmailSaga({ payload }) {
   yield put(setLoadingStatus(false));
 }
 
+//Saga обновления данных пользователя
+export function* updateUserDataSaga({ payload }) {
+  yield put(setLoadingStatus(true));
+  try {
+    let user = yield call(() => loginUserEmail(payload));
+    let userDatafromDB = yield call(() => getUserDataFormDB(user));
+
+    yield call(() => setOnline(user.id));
+    yield put(
+      setUser({
+        ...userDatafromDB,
+        createDate: userDatafromDB?.createDate?.toMillis(),
+      })
+    );
+  } catch (e) {
+    console.log(e);
+    yield put({ type: "REGISTER_USER_FALED" });
+  }
+  yield put(setLoadingStatus(false));
+}
+
 //Saga выхода пользователя
 export function* logoutUserSaga() {
   try {

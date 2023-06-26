@@ -17,8 +17,8 @@ function Header() {
             ChatOK
           </Link>
         </Typography>
-        <Search />
-        <UserProfile />
+        {user.id && <Search />}
+        {user.id && <UserProfile />}
       </Toolbar>
     </AppBar>
   );

@@ -10,15 +10,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth";
 import Loader from "./components/Loader/Loader";
 import { chatActions } from "./redux/chat/chatAction";
-import { db } from "./firebase-setting";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import { onValue } from "firebase/database";
 
 function App() {
   const dispatch = useDispatch();

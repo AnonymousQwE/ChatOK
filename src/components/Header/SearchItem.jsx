@@ -30,6 +30,7 @@ export default function SearchItem({ res, setSearchText }) {
         width: "100%",
       }}
       onClick={() => {
+        console.log(res);
         dispatch({
           type: chatActions.CREATE_NEW_CHAT_SAGA,
           payload: { res, navigate },

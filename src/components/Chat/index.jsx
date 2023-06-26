@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -6,11 +6,14 @@ import ChatInput from "./ChatInput";
 import { chatActions } from "../../redux/chat/chatAction";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
+import MessageContextMenu from "./MessageContextMenu";
 
 function Chat() {
   const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
   const { chats, chatMessages } = useSelector((state) => state.chat);
+  const [messageText, setMessageText] = useState("");
+  const [messageEditable, setMessageEditable] = useState();
 
   const messRef = useRef(null);
   const chatRef = useRef(null);
@@ -55,8 +58,18 @@ function Chat() {
           chatId={id}
         />
         <Box>
-          <ChatInput id={id} />
+          <ChatInput
+            setMessageEditable={setMessageEditable}
+            messageEditable={messageEditable}
+            messageText={messageText}
+            setMessageText={setMessageText}
+            id={id}
+          />
         </Box>
+        <MessageContextMenu
+          setMessageEditable={setMessageEditable}
+          setMessageText={setMessageText}
+        />
       </Box>
     )
   );

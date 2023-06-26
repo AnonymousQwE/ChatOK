@@ -14,6 +14,11 @@ let theme = createTheme({
   typography: {
     fontFamily: "Nunito",
   },
+  palette: {
+    primary: {
+      main: "#a255fa",
+    },
+  },
 });
 TimeAgo.addDefaultLocale(ru);
 

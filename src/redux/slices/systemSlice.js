@@ -5,6 +5,7 @@ export const systemSlice = createSlice({
   initialState: {
     status: "loading",
     contextMenu: null,
+    messageContextMenu: null,
   },
   reducers: {
     setLoadingStatus: (state, action) => {
@@ -13,7 +14,11 @@ export const systemSlice = createSlice({
     setContextMenu: (state, action) => {
       return { ...state, contextMenu: action.payload };
     },
+    setMessageContextMenu: (state, action) => {
+      return { ...state, messageContextMenu: action.payload };
+    },
   },
 });
 
-export const { setContextMenu, setLoadingStatus } = systemSlice.actions;
+export const { setContextMenu, setLoadingStatus, setMessageContextMenu } =
+  systemSlice.actions;

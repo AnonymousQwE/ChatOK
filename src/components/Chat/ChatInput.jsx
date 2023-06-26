@@ -1,30 +1,41 @@
 import { Send, TagFaces } from "@mui/icons-material";
-import { Box, IconButton, TextField } from "@mui/material";
-import { addDoc, collection, setDoc, Timestamp } from "firebase/firestore";
+import { Box, IconButton, Paper, TextField } from "@mui/material";
+import { doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { chatActions } from "../../redux/chat/chatAction";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
-import InputEmoji from "react-input-emoji";
+import { db } from "../../firebase-setting";
 
-export default function ChatInput({ id }) {
-  const [messageText, setMessageText] = useState("");
+export default function ChatInput({
+  messageEditable,
+  setMessageEditable,
+  id,
+  messageText,
+  setMessageText,
+}) {
   const { currentUser } = useSelector((state) => state.user);
   const [showSmile, setShowSmile] = useState(false);
-  window.global = window;
   const dispatch = useDispatch();
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (messageText.trim() !== "") {
-      dispatch({
-        type: chatActions.SEND_MESSAGE_SAGA,
-        payload: {
-          chatId: id,
-          text: messageText.trim(),
-          senderId: currentUser.id,
-        },
-      });
-      setMessageText("");
+      if (!messageEditable) {
+        dispatch({
+          type: chatActions.SEND_MESSAGE_SAGA,
+          payload: {
+            chatId: id,
+            text: messageText.trim(),
+            senderId: currentUser.id,
+          },
+        });
+        setMessageText("");
+      } else {
+        const docRef = doc(db, "chats", id, "messages", messageEditable.id);
+        updateDoc(docRef, { text: messageText });
+        setMessageText("");
+        setMessageEditable(null);
+      }
       setShowSmile(false);
     }
   };
@@ -44,6 +55,11 @@ export default function ChatInput({ id }) {
       component={"form"}
       onSubmit={handleSendMessage}
     >
+      {messageEditable?.id && (
+        <Paper>
+          <Box>{messageEditable.text}</Box>
+        </Paper>
+      )}
       <TextField
         placeholder="Type a message"
         value={messageText}
@@ -69,15 +85,15 @@ export default function ChatInput({ id }) {
                   zIndex: 10,
                   display: showSmile ? "" : "none",
                   position: "absolute",
-                  right: 90,
+                  right: 200,
                   width: "300px",
                   height: "300px",
-                  bottom: 45,
+                  bottom: 240,
                 }}
               >
                 <EmojiPicker
-                  height={300}
-                  width={300}
+                  height={500}
+                  width={400}
                   // theme="dark"
                   onEmojiClick={handleSmile}
                 />

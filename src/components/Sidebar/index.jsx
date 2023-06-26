@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ChatListItem from "./ChatListItem";
 import { chatActions } from "../../redux/chat/chatAction";
 import Loader from "../Loader/Loader";
+import { Emoji } from "emoji-picker-react";
 
 function Sidebar({ setContextMenu }) {
   const dispatch = useDispatch();
@@ -22,7 +23,18 @@ function Sidebar({ setContextMenu }) {
     >
       <List sx={{ marginX: 0.5 }}>
         {loading ? (
-          <Typography>Загрузка чатов...</Typography>
+          <Box
+            sx={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h6">Загрузка чатов... </Typography>
+            <Emoji size={50} unified="1f971" />
+            <Typography variant="body1">Пожалуйста подождите...</Typography>
+          </Box>
         ) : chats.length == 0 ? (
           <Box
             sx={{
@@ -30,14 +42,19 @@ function Sidebar({ setContextMenu }) {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
+              textAlign: "center",
             }}
           >
-            <Typography fontWeight={600} fontSize={18}>
-              Нет чатов
+            <Box sx={{ marginY: 3 }}>
+              <Typography fontWeight={600} fontSize={16}>
+                Нет чатов
+              </Typography>
+              <Emoji unified="1f937-200d-2642-fe0f" size={40} />
+            </Box>
+            <Typography fontWeight={600} fontSize={14}>
+              Напишите в поиск имя пользователя собеседника для начала общения
             </Typography>
-            <Button sx={{ fontSize: 12 }} variant="outlined">
-              Начать новый чат
-            </Button>
+            <Emoji unified="1f609" size={40} />
           </Box>
         ) : (
           [...chats]

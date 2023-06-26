@@ -7,20 +7,36 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { forwardRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { doc, increment, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase-setting";
 import { Done, DoneAll } from "@mui/icons-material";
 import ReactTimeAgo from "react-time-ago";
+import { setMessageContextMenu } from "../../redux/slices/systemSlice";
 
 function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const { currentUser: user } = useSelector((state) => state.user);
   const { ref: reference, inView } = useInView({
     threshold: 1,
   });
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    console.log(chatUser);
+    if (chatUser.id == user.id) {
+      dispatch(
+        setMessageContextMenu({
+          mouseX: event.pageX,
+          mouseY: event.pageY,
+          ref: { chat: chatId, message: message.id },
+        })
+      );
+    }
+  };
 
   useEffect(() => {
     if (
@@ -29,7 +45,6 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
       message.senderId !== "system" &&
       message.status.read === false
     ) {
-      console.log(message);
       const messagesRef = doc(db, `chats/${chatId}/messages`, message.id);
       const currentChatRef = doc(db, `chats`, chatId);
 
@@ -136,6 +151,7 @@ function ChatMessage({ messRef, message, owner: chatUser, chatId }, ref) {
   return (
     <>
       <ListItem
+        onContextMenu={handleContextMenu}
         ref={ref}
         sx={{
           display: "flex",
