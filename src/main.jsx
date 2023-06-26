@@ -16,7 +16,7 @@ let theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#a255fa",
+      main: "#bd86fc",
     },
   },
 });
