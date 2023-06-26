@@ -43,13 +43,14 @@ function MessageList(
     <Box
       ref={(chatRef, ref)}
       sx={{
-        margin: 1,
+        padding: 1,
         overflowY: "auto",
         overflowX: "hidden",
         display: "flex",
         flexDirection: "column",
         height: "100%",
         width: "100%",
+
       }}
     >
       <List

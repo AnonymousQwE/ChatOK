@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { chatActions } from "../../redux/chat/chatAction";
 import EmojiPicker, { Emoji } from "emoji-picker-react";
 import { db } from "../../firebase-setting";
+import { padding } from "@mui/system";
 
 export default function ChatInput({
   messageEditable,
@@ -51,7 +52,7 @@ export default function ChatInput({
 
   return (
     <Box
-      sx={{ flex: 1, position: "relative" }}
+      sx={{ flex: 1, position: "relative", paddingTop: 1 }}
       component={"form"}
       onSubmit={handleSendMessage}
     >
@@ -60,51 +61,56 @@ export default function ChatInput({
           <Box>{messageEditable.text}</Box>
         </Paper>
       )}
-      <TextField
-        placeholder="Type a message"
-        value={messageText}
-        onChange={(e) => setMessageText(e.target.value)}
-        fullWidth
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSendMessage(e);
-          }
-        }}
-        variant="outlined"
-        InputProps={{
-          endAdornment: (
-            <>
-              <IconButton
-                sx={{ position: "relative" }}
-                onClick={handleShowSmile}
-              >
-                <TagFaces fontSize="large" color={showSmile ? "primary" : ""} />
-              </IconButton>
-              <Box
-                sx={{
-                  zIndex: 10,
-                  display: showSmile ? "" : "none",
-                  position: "absolute",
-                  right: 200,
-                  width: "300px",
-                  height: "300px",
-                  bottom: 240,
-                }}
-              >
-                <EmojiPicker
-                  height={500}
-                  width={400}
-                  // theme="dark"
-                  onEmojiClick={handleSmile}
-                />
-              </Box>
-              <IconButton onClick={handleSendMessage}>
-                <Send fontSize="large" />
-              </IconButton>
-            </>
-          ),
-        }}
-      />
+      <Paper>
+        <TextField
+          placeholder="Type a message"
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
+          fullWidth
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSendMessage(e);
+            }
+          }}
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <>
+                <IconButton
+                  sx={{ position: "relative" }}
+                  onClick={handleShowSmile}
+                >
+                  <TagFaces
+                    fontSize="large"
+                    color={showSmile ? "primary" : ""}
+                  />
+                </IconButton>
+                <Box
+                  sx={{
+                    zIndex: 10,
+                    display: showSmile ? "" : "none",
+                    position: "absolute",
+                    right: 200,
+                    width: "300px",
+                    height: "300px",
+                    bottom: 240,
+                  }}
+                >
+                  <EmojiPicker
+                    height={500}
+                    width={400}
+                    // theme="dark"
+                    onEmojiClick={handleSmile}
+                  />
+                </Box>
+                <IconButton onClick={handleSendMessage}>
+                  <Send fontSize="large" />
+                </IconButton>
+              </>
+            ),
+          }}
+        />
+      </Paper>
     </Box>
   );
 }

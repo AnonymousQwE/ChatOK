@@ -44,6 +44,10 @@ function Chat() {
           flexDirection: "column",
           paddingY: 1,
           paddingX: 1,
+          background: `url(
+            "https://img.freepik.com/free-vector/abstract-watercolor-background_23-2149054089.jpg?w=1380&t=st=1687775106~exp=1687775706~hmac=4c9cfca3b826d96f562463a266fcc78e24b39a049eafce8238d98ef16a51030f"
+          )`,
+          backgroundSize: "cover",
         }}
       >
         <ChatHeader currentChat={currentChat} />
